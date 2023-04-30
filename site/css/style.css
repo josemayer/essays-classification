@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  background-color: #fbfbfd;
+  color: #1f2028;
+  font-family: "Comme", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.icon {
+  font-size: 30px;
+}
+
+.header {
+  background-color: #1f2028;
+  color: #fbfbfd;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 40px;
+}
+
+.header .department {
+  font-size: 20px;
+  font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header .divider {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 20px auto;
+}
+
+.header .authors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 30px;
+  flex-grow: 1;
+}
+
+button {
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #1f2028;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #1f2028;
+  font-size: 16px;
+  transition: all 0.1s ease-in-out;
+  margin-top: 2px;
+}
+
+button:hover {
+  cursor: pointer;
+  padding-bottom: 9px;
+  border-bottom: 3px solid #1f2028;
+}
+
+button:active {
+  border-bottom: 2px solid #1f2028;
+  transform: translateY(4px);
+  background-color: rgba(31, 32, 40, 0.2);
+}
+
+button:disabled,
+button[disabled] {
+  color: #939999;
+  border-bottom: 2px solid #939999;
+}
+
+button:disabled:hover,
+button[disabled]:hover {
+  cursor: not-allowed;
+  padding-bottom: 10px;
+}
+
+button:disabled:active,
+button[disabled]:active {
+  transform: translateY(0px);
+  background-color: transparent;
+}
+
+button .icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.footer {
+  background-color: #1f2028;
+  color: #fbfbfd;
+  padding: 10px 20px;
+  text-align: center;
+  bottom: 0;
+}
