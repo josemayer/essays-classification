@@ -1,0 +1,3 @@
+[submodule "src/essay"]
+	path = src/essay
+	url = git@github.com:rafaelanchieta/essay.git
