@@ -36,7 +36,7 @@ def read_corpus_and_split(essay_path):
     valid[['compI', 'compII', 'compIII', 'compIV', 'compV']] = valid['competence'].apply(lambda x: pd.Series(x))
     test[['compI', 'compII', 'compIII', 'compIV', 'compV']] = test['competence'].apply(lambda x: pd.Series(x))
 
-    os.chdir('..')
+    os.chdir(source_directory)
 
     return train, valid, test
 
@@ -87,7 +87,7 @@ def save_best_model(model, name):
     model.save('models/' + name + '.h')
 
 def main():
-    train, valid, test = read_corpus_and_split("datasets/essay")
+    train, valid, test = read_corpus_and_split("datasets/custom")
 
     train_encodings, train_labels, valid_encodings, valid_labels, bert = preprocess_data(train, valid, test)
 
