@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
-from tensorflow.keras.layers import Input, Dense, Dropout, LayerNormalization
+from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
 
 def normalize_grades(grades):
@@ -56,15 +56,12 @@ class EssayHyperModel(kt.HyperModel):
 
         x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
         x = Dropout(0.5)(x)
-        x = LayerNormalization()(x)
 
         x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
         x = Dropout(0.5)(x)
-        x = LayerNormalization()(x)
 
         x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
         x = Dropout(0.5)(x)
-        x = LayerNormalization()(x)
 
         output = Dense(1, activation='linear')(x)
 
