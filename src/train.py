@@ -61,14 +61,14 @@ class EssayHyperModel(kt.HyperModel):
         input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
         embedding = self.bert({'input_ids': input_ids})['pooler_output']
 
-        x = Dense(1000, activation='selu')(embedding)
-        x = Dense(1000, activation='selu')(x)
-        x = Dense(1000, activation='selu')(x)
+        x = Dense(1000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
+        x = Dense(1000, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
+        x = Dense(1000, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
         output = Dense(1, activation='linear')(x)
 
         model = Model(inputs=input_ids, outputs=output)
 
-        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-8, 2e-7, 2e-6, 2e-5, 2e-4]))
+        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-7, 2e-5, 2e-3]))
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
 
         return model
@@ -76,7 +76,7 @@ class EssayHyperModel(kt.HyperModel):
     def fit(self, hp, model, *args, **kwargs):
         return model.fit(
             *args,
-            batch_size=hp.Choice("batch_size", [2, 4, 6, 8, 12]),
+            batch_size=hp.Choice("batch_size", [2, 6, 12]),
             **kwargs,
         )
 
