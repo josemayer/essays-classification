@@ -1,2 +1,5 @@
-/* Ignore split CSV cache files of custom dataset */
+/* Tuner directory of neural networks */
+src/tuner_directory
+
+/* Split CSV cache files of custom dataset */
 src/datasets/custom/data/splits
