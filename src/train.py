@@ -108,7 +108,7 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=10
+        epochs=6
     )
 
     best_model = tuner.get_best_models(1)[0]
