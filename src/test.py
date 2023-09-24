@@ -4,70 +4,71 @@ import numpy as np
 import transformers
 import tensorflow as tf
 from keras.models import load_model
-from transformers import BertTokenizer
+from transformers import BertTokenizer, TFBertModel
 from sklearn.metrics import cohen_kappa_score
 
-from train import preprocess_data, tokenize_to_input, grade_multiple_essays, calculate_accuracy, save_best_model
+from train import read_corpus_and_split, encode_data
+
+def grade_multiple_essays(model, test_encodings):
+    predictions = model.predict(np.array(test_encodings['input_ids']), verbose=0)
+    return np.concatenate(predictions)
+
+def calculate_accuracy(arr_true, arr_pred):
+    assert(len(arr_true) == len(arr_pred)), "Arrays do not match length"
+    equals = 0
+    for y_true, y_pred in zip(arr_true, arr_pred):
+        if y_true == y_pred:
+            equals += 1
+    return equals/len(arr_true)
+
+def calculate_discrepancy(arr_true, arr_pred):
+    assert(len(arr_true) == len(arr_pred)), "Arrays do not match length"
+    discrepants = 0
+    for y_true, y_pred in zip(arr_true, arr_pred):
+        if abs(y_true - y_pred) > 2:
+            discrepants += 1
+    return discrepants/len(arr_true)
+
+def retrieve_saved_model(model_path, model_name):
+    model = load_model(f"{model_path + model_name}", custom_objects={"TFBertModel": TFBertModel})
+    return model
 
 def main():
-    source_directory = os.path.dirname(os.path.abspath(__file__))
-    essay_directory = os.path.join(source_directory, "essay")
-    os.chdir(essay_directory)
-    sys.path.append(essay_directory)
-
-    from build_dataset import Corpus
-
-    c = Corpus()
-    c.read_corpus().head()
-
-    _, _, test = c.read_splits()
-
     tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
+    bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
 
-    test_encodings, test_labels, _, _, _ = preprocess_data(None, None, test)
+    X_label = 'essay'
+    Y_labels = { 'compI': 'c1_reg.h5' }
+    saved_models_path = os.getcwd() + '/../models/'
 
-    essay_label = 'essay'
-    comps = {
-        'compI': 'c1'
-    }
-    current_dir = os.getcwd()
-    models_path = current_dir + '/../models/'
+    _, _, test = read_corpus_and_split("datasets/custom")
 
-    for comp in comps:
-        file_key = comps[comp]
+    for comp in Y_labels:
+        file_key = Y_labels[comp]
 
-        x_test = test_encodings[essay_label]
-        y_test = test_labels[comp]
+        test_encodings, test_labels = encode_data(test, X_label, comp, tokenizer)
 
-        model = load_model(f"{models_path + file_key}_reg.h5", custom_objects={"TFBertModel": transformers.TFBertModel})
-
+        model = retrieve_saved_model(saved_models_path, file_key)
         model.summary()
 
         print(f"Model for {comp}")
-        model_evaluation(model, x_test, y_test)
+        model_evaluation(model, test_encodings, test_labels)
         print("")
 
-def model_evaluation(model, x_test, y_test):
-    max_length = 512
-
-    preds = grade_multiple_essays(model, x_test)
+def model_evaluation(model, test_encodings, test_labels):
+    preds = grade_multiple_essays(model, test_encodings)
     preds = np.squeeze(np.round(preds).astype(int))
 
-    qwk = cohen_kappa_score(np.array(y_test), preds, weights="quadratic")
-    accuracy = calculate_accuracy(np.array(y_test), preds)
+    qwk = cohen_kappa_score(test_labels, preds, weights="quadratic")
+    accuracy = calculate_accuracy(test_labels, preds)
 
-    test_encodings = tokenizer(x_test.to_list(), truncation=True, padding=True, max_length=max_length)
-    test_labels = tf.constant(y_test, dtype=tf.float32)
-
-    x_test_input_ids = np.array(test_encodings['input_ids'])
-    test_data = x_test_input_ids
-
-    loss, mse = model.evaluate(test_data, test_labels, verbose=0)
+    loss, mse = model.evaluate(np.array(test_encodings['input_ids']), test_labels, verbose=0)
 
     print(f"Quadratic Weighted Kappa: {qwk}")
     print(f"Mean Squared Error: {mse}")
     print(f"Accuracy: {accuracy * 100}%")
-    return qwk, mse, accuracy, loss
+    print(f"Discrepancy: {discrepancy * 100}%")
+    return qwk, mse, accuracy, discrepancy, loss
 
 if __name__ == "__main__":
     main()
