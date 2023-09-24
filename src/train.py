@@ -40,18 +40,11 @@ def read_corpus_and_split(essay_path):
 
     return train, valid, test
 
-def preprocess_data(train, valid, test):
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
-    bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
+def encode_data(dataset, x, y, tokenizer, max_length = 512):
+    encodings = tokenizer(dataset[x].to_list(), truncation=True, padding=True, max_length=max_length)
+    labels = tf.constant(dataset[y], dtype=tf.float32)
 
-    max_length = 512
-    train_encodings = tokenizer(train['essay'].to_list(), truncation=True, padding=True, max_length=max_length)
-    valid_encodings = tokenizer(valid['essay'].to_list(), truncation=True, padding=True, max_length=max_length)
-
-    train_labels = tf.constant(train['compI'], dtype=tf.float32)
-    valid_labels = tf.constant(valid['compI'], dtype=tf.float32)
-
-    return train_encodings, train_labels, valid_encodings, valid_labels, bert
+    return encodings, labels
 
 class EssayHyperModel(kt.HyperModel):
     def __init__(self, bert):
@@ -61,17 +54,17 @@ class EssayHyperModel(kt.HyperModel):
         input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
         embedding = self.bert({'input_ids': input_ids})['pooler_output']
 
-        x = Dense(1000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
+        x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
         x = Dropout(0.7)(x)
-        x = Dense(2500, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
+        x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
         x = Dropout(0.6)(x)
-        x = Dense(3000, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
+        x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
         x = Dropout(0.5)(x)
         output = Dense(1, activation='linear')(x)
 
         model = Model(inputs=input_ids, outputs=output)
 
-        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-7, 2e-5, 2e-3]))
+        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-3, 2e-5, 2e-7]))
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
 
         return model
@@ -84,12 +77,19 @@ class EssayHyperModel(kt.HyperModel):
         )
 
 def save_best_model(model, name):
-    model.save('models/' + name + '.h')
+    model.save('../models/' + name + '.h5')
 
 def main():
+    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
+    bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
+    
+    X_label = 'essay'
+    Y_label = 'compI'
+    
     train, valid, test = read_corpus_and_split("datasets/custom")
-
-    train_encodings, train_labels, valid_encodings, valid_labels, bert = preprocess_data(train, valid, test)
+    train_encodings, train_labels = encode_data(train, X_label, Y_label, tokenizer)
+    valid_encodings, valid_labels = encode_data(valid, X_label, Y_label, tokenizer)
+    test_encodings, test_labels = encode_data(test, X_label, Y_label, tokenizer)
 
     hypermodel = EssayHyperModel(bert)
 
@@ -110,15 +110,7 @@ def main():
 
     best_model = tuner.get_best_models(1)[0]
 
-    max_length = 512
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
-    test_encodings = tokenizer(test['essay'].to_list(), truncation=True, padding=True, max_length=max_length)
-    test_labels = tf.constant(test['compI'], dtype=tf.float32)
-
-    x_test_input_ids = np.array(test_encodings['input_ids'])
-    test_data = x_test_input_ids
-
-    evaluation = best_model.evaluate(test_data, test_labels)
+    evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
 
     save_best_model(best_model, 'c1_reg')
