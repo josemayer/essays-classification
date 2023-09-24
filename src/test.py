@@ -49,7 +49,6 @@ def main():
         test_encodings, test_labels = encode_data(test, X_label, comp, tokenizer)
 
         model = retrieve_saved_model(saved_models_path, file_key)
-        model.summary()
 
         print(f"Model for {comp}")
         model_evaluation(model, test_encodings, test_labels)
