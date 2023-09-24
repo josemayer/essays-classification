@@ -1,0 +1,2 @@
+/* Ignore split CSV cache files of custom dataset */
+src/datasets/custom/data/splits
