@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
-from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.layers import Input, Dense, Dropout, LayerNormalization
 from tensorflow.keras.models import Model
 
 def normalize_grades(grades):
