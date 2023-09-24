@@ -55,11 +55,17 @@ class EssayHyperModel(kt.HyperModel):
         embedding = self.bert({'input_ids': input_ids})['pooler_output']
 
         x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
-        x = Dropout(0.7)(x)
+        x = Dropout(0.8)(x)
+        x = LayerNormalization()(x)
+
         x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
-        x = Dropout(0.6)(x)
+        x = Dropout(0.8)(x)
+        x = LayerNormalization()(x)
+
         x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
-        x = Dropout(0.5)(x)
+        x = Dropout(0.8)(x)
+        x = LayerNormalization()(x)
+
         output = Dense(1, activation='linear')(x)
 
         model = Model(inputs=input_ids, outputs=output)
