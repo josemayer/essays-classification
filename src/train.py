@@ -14,9 +14,9 @@ def normalize_grades(grades):
 def join_text(text_array):
     return '\n'.join(text_array)
 
-def read_corpus_and_split():
+def read_corpus_and_split(essay_path):
     source_directory = os.path.dirname(os.path.abspath(__file__))
-    essay_directory = os.path.join(source_directory, "essay")
+    essay_directory = os.path.join(source_directory, essay_path)
     os.chdir(essay_directory)
 
     sys.path.append(essay_directory)
@@ -87,7 +87,7 @@ def save_best_model(model, name):
     model.save('models/' + name + '.h')
 
 def main():
-    train, valid, test = read_corpus_and_split()
+    train, valid, test = read_corpus_and_split("datasets/essay")
 
     train_encodings, train_labels, valid_encodings, valid_labels, bert = preprocess_data(train, valid, test)
 

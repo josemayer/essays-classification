@@ -1,3 +1,6 @@
 [submodule "src/essay"]
 	path = src/essay
 	url = git@github.com:rafaelanchieta/essay.git
+[submodule "src/datasets/essay"]
+	path = src/datasets/essay
+	url = git@github.com:rafaelanchieta/essay.git
