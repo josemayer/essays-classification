@@ -61,6 +61,7 @@ def model_evaluation(model, test_encodings, test_labels):
 
     qwk = cohen_kappa_score(test_labels, preds, weights="quadratic")
     accuracy = calculate_accuracy(test_labels, preds)
+    discrepancy = calculate_discrepancy(test_labels, preds)
 
     loss, mse = model.evaluate(np.array(test_encodings['input_ids']), test_labels, verbose=0)
 
