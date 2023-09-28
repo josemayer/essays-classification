@@ -23,7 +23,7 @@ def read_corpus_and_split(essay_path):
     from build_dataset import Corpus
     c = Corpus()
 
-    train, valid, test = c.read_splits()
+    train, valid, test = c.read_splits(single_df = True)
 
     train['competence'] = train['competence'].apply(normalize_grades)
     train['essay'] = train['essay'].apply(join_text)
