@@ -5,7 +5,7 @@ import transformers
 import tensorflow as tf
 from keras.models import load_model
 from transformers import BertTokenizer, TFBertModel
-from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import cohen_kappa_score, confusion_matrix
 
 from train import read_corpus_and_split, encode_data
 
@@ -61,6 +61,7 @@ def model_evaluation(model, test_encodings, test_labels):
     qwk = cohen_kappa_score(test_labels, preds, weights="quadratic")
     accuracy = calculate_accuracy(test_labels, preds)
     discrepancy = calculate_discrepancy(test_labels, preds)
+    conf_matrix = confusion_matrix(test_labels, preds)
 
     loss, mse = model.evaluate(np.array(test_encodings['input_ids']), test_labels, verbose=0)
 
@@ -68,7 +69,8 @@ def model_evaluation(model, test_encodings, test_labels):
     print(f"Mean Squared Error: {mse}")
     print(f"Accuracy: {accuracy * 100}%")
     print(f"Discrepancy: {discrepancy * 100}%")
-    return qwk, mse, accuracy, discrepancy, loss
+    print(f"Confusion Matrix: {conf_matrix}")
+    return qwk, mse, accuracy, discrepancy, conf_matrix, loss
 
 if __name__ == "__main__":
     main()
