@@ -1,4 +1,6 @@
 import os
+import json
+import time
 import pandas as pd
 import numpy as np
 import transformers
@@ -33,6 +35,23 @@ def retrieve_saved_model(model_path, model_name):
     model = load_model(f"{model_path + model_name}", custom_objects={"TFBertModel": TFBertModel})
     return model
 
+def generate_metrics(metrics):
+    qwk, mse, accuracy, discrepancy, conf_matrix, loss = metrics
+    model_metrics = {
+        "qwk": qwk,
+        "mse": mse,
+        "accuracy": accuracy,
+        "discrepancy": discrepancy,
+        "conf_matrix": conf_matrix,
+        "loss": loss
+    }
+    return model_metrics
+
+def save_evaluation(evaluation, path="metrics/"):
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    with open(path + timestamp + '.json', 'w') as fp:
+        json.dump(evaluation, fp)
+
 def main():
     tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
     bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
@@ -43,6 +62,7 @@ def main():
 
     _, _, test = read_corpus_and_split("datasets/custom")
 
+    evaluation = {}
     for comp in Y_labels:
         file_key = Y_labels[comp]
 
@@ -50,9 +70,12 @@ def main():
 
         model = retrieve_saved_model(saved_models_path, file_key)
 
-        print(f"Model for {comp}")
-        model_evaluation(model, test_encodings, test_labels)
+        print(f"Model for {comp} ======")
+        metrics = model_evaluation(model, test_encodings, test_labels)
+        evaluation[comp] = generate_metrics(metrics)
         print("")
+
+    save_evaluation(evaluation)
 
 def model_evaluation(model, test_encodings, test_labels):
     preds = grade_multiple_essays(model, test_encodings)
