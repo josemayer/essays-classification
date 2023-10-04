@@ -42,7 +42,7 @@ def generate_metrics(metrics):
         "mse": mse,
         "accuracy": accuracy,
         "discrepancy": discrepancy,
-        "conf_matrix": conf_matrix,
+        "conf_matrix": conf_matrix.tolist(),
         "loss": loss
     }
     return model_metrics
