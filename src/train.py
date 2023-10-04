@@ -55,20 +55,20 @@ class EssayHyperModel(kt.HyperModel):
         input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
         embedding = self.bert({'input_ids': input_ids})['pooler_output']
 
-        x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'sigmoid']))(embedding)
+        x = Dense(3000, activation='selu')(embedding)
         x = Dropout(0.5)(x)
 
-        x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'sigmoid']))(x)
+        x = Dense(2000, activation='selu')(x)
         x = Dropout(0.5)(x)
 
-        x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'sigmoid']))(x)
+        x = Dense(2500, activation='selu')(x)
         x = Dropout(0.5)(x)
 
         output = Dense(1, activation='linear')(x)
 
         model = Model(inputs=input_ids, outputs=output)
 
-        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-3, 2e-5, 2e-7]))
+        optimizer = tf.keras.optimizers.Adam(learning_rate=2e-5)
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
 
         return model
@@ -76,7 +76,7 @@ class EssayHyperModel(kt.HyperModel):
     def fit(self, hp, model, *args, **kwargs):
         return model.fit(
             *args,
-            batch_size=hp.Choice("batch_size", [2, 4, 6]),
+            batch_size=4,
             **kwargs,
         )
 
@@ -86,8 +86,8 @@ def save_best_model(model, name):
 def main():
     tf.compat.v1.Session(config=gpu_config())
 
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
-    bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
+    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-large-portuguese-cased')
+    bert = TFBertModel.from_pretrained('neuralmind/bert-large-portuguese-cased')
 
     X_label = 'essay'
     Y_label = 'compI'
@@ -111,7 +111,7 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=6
+        epochs=10
     )
 
     best_model = tuner.get_best_models(1)[0]
