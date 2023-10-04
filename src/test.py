@@ -8,6 +8,7 @@ import tensorflow as tf
 from keras.models import load_model
 from transformers import BertTokenizer, TFBertModel
 from sklearn.metrics import cohen_kappa_score, confusion_matrix
+from config.gpu_options import gpu_config
 
 from train import read_corpus_and_split, encode_data
 
@@ -53,6 +54,8 @@ def save_evaluation(evaluation, path="metrics/"):
         json.dump(evaluation, fp)
 
 def main():
+    tf.compat.v1.Session(config=gpu_config())
+
     tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
     bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
 

@@ -7,6 +7,7 @@ import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
+from config.gpu_options import gpu_config
 
 def normalize_grades(grades):
     return [int(x / 40) for x in grades]
@@ -54,13 +55,13 @@ class EssayHyperModel(kt.HyperModel):
         input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
         embedding = self.bert({'input_ids': input_ids})['pooler_output']
 
-        x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'relu', 'sigmoid']))(embedding)
+        x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'sigmoid']))(embedding)
         x = Dropout(0.5)(x)
 
-        x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'relu', 'sigmoid']))(x)
+        x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'sigmoid']))(x)
         x = Dropout(0.5)(x)
 
-        x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'relu', 'sigmoid']))(x)
+        x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'sigmoid']))(x)
         x = Dropout(0.5)(x)
 
         output = Dense(1, activation='linear')(x)
@@ -75,7 +76,7 @@ class EssayHyperModel(kt.HyperModel):
     def fit(self, hp, model, *args, **kwargs):
         return model.fit(
             *args,
-            batch_size=hp.Choice("batch_size", [2, 6, 12]),
+            batch_size=hp.Choice("batch_size", [2, 4, 6]),
             **kwargs,
         )
 
@@ -83,12 +84,14 @@ def save_best_model(model, name):
     model.save('../models/' + name + '.h5')
 
 def main():
+    tf.compat.v1.Session(config=gpu_config())
+
     tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
     bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
-    
+
     X_label = 'essay'
     Y_label = 'compI'
-    
+
     train, valid, test = read_corpus_and_split("datasets/custom")
     train_encodings, train_labels = encode_data(train, X_label, Y_label, tokenizer)
     valid_encodings, valid_labels = encode_data(valid, X_label, Y_label, tokenizer)
