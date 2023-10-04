@@ -61,7 +61,9 @@ def main():
 
     X_label = 'essay'
     Y_labels = { 'compI': 'c1_reg.h5' }
-    saved_models_path = os.getcwd() + '/../models/'
+
+    current_path = os.getcwd()
+    saved_models_path = current_path + '/../models/'
 
     _, _, test = read_corpus_and_split("datasets/custom")
 
@@ -75,7 +77,7 @@ def main():
 
         print(f"Model for {comp} ======")
         metrics = model_evaluation(model, test_encodings, test_labels)
-        evaluation[comp] = generate_metrics(metrics)
+        evaluation[comp] = generate_metrics(metrics, path=(current_path + "../metrics/"))
         print("")
 
     save_evaluation(evaluation)

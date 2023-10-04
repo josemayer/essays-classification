@@ -6,3 +6,12 @@ src/tuner_directory
 
 /* Split CSV cache files of custom dataset */
 src/datasets/custom/data/splits
+
+/* Ignore log files */
+src/logs/*
+
+/* Ignore models (temporary) */
+models/*
+
+/* Ignore metrics (temporary) */
+metrics/*
