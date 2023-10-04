@@ -1,10 +1,11 @@
 import os
 import sys
+import evaluate
 import pandas as pd
 import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
-from transformers import BertTokenizer, TFBertModel
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
 from config.gpu_options import gpu_config
@@ -41,85 +42,63 @@ def read_corpus_and_split(essay_path):
 
     return train, valid, test
 
-def encode_data(dataset, x, y, tokenizer, max_length = 512):
-    encodings = tokenizer(dataset[x].to_list(), truncation=True, padding=True, max_length=max_length)
-    labels = tf.constant(dataset[y], dtype=tf.float32)
-
-    return encodings, labels
-
-class EssayHyperModel(kt.HyperModel):
-    def __init__(self, bert):
-      self.bert = bert
-
-    def build(self, hp):
-        input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
-        embedding = self.bert({'input_ids': input_ids})['pooler_output']
-
-        x = Dense(3000, activation=hp.Choice('activation_l1', values=['selu', 'sigmoid']))(embedding)
-        x = Dropout(0.5)(x)
-
-        x = Dense(2000, activation=hp.Choice('activation_l2', values=['selu', 'sigmoid']))(x)
-        x = Dropout(0.5)(x)
-
-        x = Dense(2500, activation=hp.Choice('activation_l3', values=['selu', 'sigmoid']))(x)
-        x = Dropout(0.5)(x)
-
-        output = Dense(1, activation='linear')(x)
-
-        model = Model(inputs=input_ids, outputs=output)
-
-        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-3, 2e-5, 2e-7]))
-        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
-
-        return model
-
-    def fit(self, hp, model, *args, **kwargs):
-        return model.fit(
-            *args,
-            batch_size=hp.Choice("batch_size", [2, 4, 6]),
-            **kwargs,
-        )
+def encode_data(data):
+    tokenizer = AutoTokenizer.from_pretrained('PORTULAN/albertina-ptbr')
+    return tokenizer(data["text"], truncation=True, padding=True)
 
 def save_best_model(model, name):
     model.save('../models/' + name + '.h5')
 
+def compute_metrics(eval_preds):
+    metric = evaluate.load("mse")
+    logits, labels = eval_preds
+    predictions = np.round(logits)
+    return metric.compute(predictions=predictions, references=labels)
+
 def main():
     tf.compat.v1.Session(config=gpu_config())
 
-    tokenizer = BertTokenizer.from_pretrained('neuralmind/bert-base-portuguese-cased')
-    bert = TFBertModel.from_pretrained('neuralmind/bert-base-portuguese-cased')
+    bert = AutoModelForSequenceClassification.from_pretrained('PORTULAN/albertina-ptbr', num_labels=1)
+    tokenizer = AutoTokenizer.from_pretrained('PORTULAN/albertina-ptbr')
 
     X_label = 'essay'
     Y_label = 'compI'
 
     train, valid, test = read_corpus_and_split("datasets/custom")
-    train_encodings, train_labels = encode_data(train, X_label, Y_label, tokenizer)
-    valid_encodings, valid_labels = encode_data(valid, X_label, Y_label, tokenizer)
-    test_encodings, test_labels = encode_data(test, X_label, Y_label, tokenizer)
 
-    hypermodel = EssayHyperModel(bert)
+    train = train[['essay', 'c1']]
+    valid = valid[['essay', 'c1']]
+    test = test[['essay', 'c1']]
 
-    tuner = kt.GridSearch(
-        hypermodel,
-        objective='val_loss',
-        executions_per_trial=1,
-        directory='tuner_directory',
-        project_name='essay_scoring'
+    train = train.rename(columns={"essay": "text", "c1": "label"})
+    valid = valid.rename(columns={"essay": "text", "c1": "label"})
+    test = test.rename(columns={"essay": "text", "c1": "label"})
+
+    tokenized_train = train.map(encode_data, batched=True)
+    tokenized_valid = valid.map(encode_data, batched=True)
+    tokenized_test = test.map(encode_data, batched=True)
+
+    training_args = TrainingArguments(
+        output_dir="essay_classification_out",
+        learning_rate=2e-5,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=4,
+        num_train_epochs=10,
+        weight_decay=0.01,
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        load_best_model_at_end=True,
     )
 
-    tuner.search(
-        np.array(train_encodings['input_ids']),
-        train_labels,
-        validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=6
+    trainer = Trainer(
+        model=bert,
+        args=training_args,
+        train_dataset=tokenized_train,
+        eval_dataset=tokenized_valid,
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics,
     )
 
-    best_model = tuner.get_best_models(1)[0]
-
-    evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
-    print("Evaluation results:", evaluation)
-
-    save_best_model(best_model, 'c1_reg')
 
 if __name__ == "__main__":
     main()
