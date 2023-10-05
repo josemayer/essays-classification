@@ -5,7 +5,7 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
+from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, TrainingArguments, Trainer
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
 from config.gpu_options import gpu_config
@@ -58,7 +58,7 @@ def compute_metrics(eval_preds):
 def main():
     tf.compat.v1.Session(config=gpu_config())
 
-    bert = AutoModelForSequenceClassification.from_pretrained('PORTULAN/albertina-ptbr', num_labels=1)
+    bert = TFAutoModelForSequenceClassification.from_pretrained('PORTULAN/albertina-ptbr', num_labels=1)
     tokenizer = AutoTokenizer.from_pretrained('PORTULAN/albertina-ptbr')
 
     X_label = 'essay'
