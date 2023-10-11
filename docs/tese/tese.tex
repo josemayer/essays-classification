@@ -109,66 +109,32 @@
 % armazenados nos metadados do PDF.
 \title{
     % Obrigatório nas duas línguas
-    titlept={Título do trabalho},
-    titleen={Title of the document},
+    titlept={Avaliação Automática de Redações Dissertativo-Argumentativas no Modelo do ENEM},
+    titleen={Automatic Evaluation of Argumentative Essays in the ENEM Model},
     % Opcional, mas se houver deve existir nas duas línguas
-    subtitlept={um subtítulo},
-    subtitleen={a subtitle},
+    subtitlept={},
+    subtitleen={},
 }
 
-\author[fem]{Nome Completo}
+\author{José Lucas Silva Mayer}
 
 % Para TCCs, este comando define o supervisor
-\orientador[fem]{Profª. Drª. Fulana de Tal}
+\orientador{Prof. Dr. Denis Deratani Mauá}
 
 % Se não houver, remova; se houver mais de um, basta
 % repetir o comando quantas vezes forem necessárias
-\coorientador{Prof. Dr. Ciclano de Tal}
-\coorientador[fem]{Profª. Drª. Beltrana de Tal}
+\coorientador{Igor Cataneo Silveira}
 
 % A página de rosto da versão para depósito (ou seja, a versão final
 % antes da defesa) deve ser diferente da página de rosto da versão
 % definitiva (ou seja, a versão final após a incorporação das sugestões
 % da banca).
 \defesa{
-  nivel=mestrado, % mestrado, doutorado ou tcc
+  nivel=tcc, % mestrado, doutorado ou tcc
   % É a versão para defesa ou a versão definitiva?
   %definitiva,
-  % É qualificação?
-  %quali,
-  programa={Ciência da Computação},
-  membrobanca={Profª. Drª. Fulana de Tal (orientadora) -- IME-USP [sem ponto final]},
-  % Em inglês, não há o "ª"
-  %membrobanca{Prof. Dr. Fulana de Tal (advisor) -- IME-USP [sem ponto final]},
-  membrobanca={Prof. Dr. Ciclano de Tal -- IME-USP [sem ponto final]},
-  membrobanca={Profª. Drª. Convidada de Tal -- IMPA [sem ponto final]},
-  % Se não houve bolsa, remova
-  %
-  % Norma sobre agradecimento por auxílios da FAPESP:
-  % https://fapesp.br/11789/referencia-ao-apoio-da-fapesp-em-todas-as-formas-de-divulgacao
-  %
-  % Norma sobre agradecimento por auxílios da CAPES (Portaria 206,
-  % de 4 de Setembro de 2018):
-  % https://www.in.gov.br/materia/-/asset_publisher/Kujrw0TZC2Mb/content/id/39729251/do1-2018-09-05-portaria-n-206-de-4-de-setembro-de-2018-39729135
-  %
-  %apoio={O presente trabalho foi realizado com apoio da Coordenação
-  %       de Aperfeiçoamento\\ de Pessoal de Nível Superior -- Brasil
-  %       (CAPES) -- Código de Financiamento 001}, % o código é sempre 001
-  %
-  %apoio={This study was financed in part by the Coordenação de
-  %       Aperfeiçoamento\\ de Pessoal de Nível Superior -- Brasil
-  %       (CAPES) -- Finance Code 001}, % o código é sempre 001
-  %
-  %apoio={Durante o desenvolvimento deste trabalho, o autor recebeu\\
-  %       auxílio financeiro da FAPESP -- processo nº aaaa/nnnnn-d},
-  %
-  %apoio={During the development if this work, the author received\\
-  %       financial support from FAPESP -- grant \#aaaa/nnnnn-d},
-  %
-  apoio={Durante o desenvolvimento deste trabalho o autor
-         recebeu auxílio financeiro da XXXX},
   local={São Paulo},
-  data=2017-08-10, % YYYY-MM-DD
+  data=2023-30-11, % YYYY-MM-DD
   % A licença do seu trabalho. Use CC-BY, CC-BY-NC, CC-BY-ND, CC-BY-SA,
   % CC-BY-NC-SA ou CC-BY-NC-ND para escolher a licença Creative Commons
   % correspondente (o sistema insere automaticamente o texto da licença).
@@ -216,8 +182,8 @@
 %%%%%%%%%%%%%%%% DEDICATÓRIA, AGRADECIMENTOS, RESUMO/ABSTRACT %%%%%%%%%%%%%%%%%%
 
 \begin{dedicatoria}
-Esta seção é opcional e fica numa página separada; ela pode ser usada para
-uma dedicatória ou epígrafe.
+\textit{In memoriam} de Luiz Augusto Paulino Jorge, que se aventurou comigo nas
+primeiras jornadas da minha vida pela computação.
 \end{dedicatoria}
 
 % Reinicia o contador de páginas (a próxima página recebe o número "i") para
@@ -274,14 +240,9 @@ texto texto texto texto. Texto opcional.
 \disablenewpage{\chapter*{Lista de abreviaturas}}
 
 \begin{tabular}{rl}
-   CFT & Transformada contínua de Fourier (\emph{Continuous Fourier Transform})\\
-   DFT & Transformada discreta de Fourier (\emph{Discrete Fourier Transform})\\
-  EIIP & Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})\\
-  STFT & Transformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})\\
-  ABNT & Associação Brasileira de Normas Técnicas\\
-   URL & Localizador Uniforme de Recursos (\emph{Uniform Resource Locator})\\
-   IME & Instituto de Matemática e Estatística\\
-   USP & Universidade de São Paulo
+    AES & Avaliação Automática de Redações (\emph{Automated Essay Scoring})\\
+    IME & Instituto de Matemática e Estatística\\
+    USP & Universidade de São Paulo
 \end{tabular}
 
 %\chapter*{Lista de símbolos}
@@ -349,8 +310,7 @@ texto texto texto texto. Texto opcional.
 % Espaçamento simples
 \singlespacing
 
-\input{conteudo/00-exemplo-introducao}
-\input{conteudo/01-exemplo-normas-ime}
+\input{conteudo/01-introducao}
 \input{conteudo/02-exemplo-usando-o-modelo}
 \input{conteudo/03-exemplo-latex}
 \input{conteudo/04-exemplo-tutorial}
