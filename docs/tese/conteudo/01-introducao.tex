@@ -1,3 +1,5 @@
+% TODO: Adicionar referências ao longo de toda a introdução
+
 \chapter{Introdução}
 
 Tradicionalmente, técnicas de classificação de texto têm desempenhado um papel fundamental na avaliação e atribuição de notas a redações com base em vários parâmetros, como conteúdo, estrutura, coerência e proficiência linguística. Algoritmos clássicos de aprendizado de máquina têm sido utilizados para identificar e avaliar características-chave dentro das redações, com o intuito de mimetizar o processo humano de correção manual dos textos. Essas técnicas muitas vezes dependem de padrões avaliados sob medida e de conhecimento específico do domínio, o que pode ser trabalhoso e menos adaptável à natureza dinâmica da linguagem.
@@ -6,6 +8,36 @@ Além disso, os modelos tradicionais de avaliação textual automática enfrenta
 
 Em particular, o surgimento recente de modelos de linguagem como o \textit{Bidirectional Encoder Representations from Transformers} (BERT) e as arquiteturas de \textit{transformers} auxiliou na mitigação desse problema. O BERT, introduzido pelo Google em 2018, revolucionou a área de Processamento de Linguagem Natural (NLP) ao introduzir os \textit{embeddings}\footnote{\textit{Embeddings}, no âmbito do NLP, são representações vetoriais numéricas de palavras, cuja codificação tem o intuito de garantir que o computador entenda seu contexto e semântica.} contextualizados de palavras. Os \textit{transformers}, arquitetura subjacente ao BERT, se destacaram, por sua vez, em várias tarefas de NLP ao considerar o contexto e as relações entre palavras, tornando-os excepcionalmente adequados para a avaliação de redações.
 
-Esses modelos operam com base nos princípios de pré-treinamento e de ajuste fino. Durante a fase do pré-treinamento, aprendem as complexidades da linguagem ao prever palavras ausentes em frases e compreender o contexto em que são usadas. Posteriormente, o ajuste fino permite que os modelos se adaptem a tarefas específicas, como a correção automática, a partir do treinamento com dados já rotulados. A capacidade de considerar a redação como uma unidade contextual, em oposição a palavras ou frases isoladas, capacita os \textit{transformers} a capturar as complexidades da linguagem, incluindo semântica, coerência e até mesmo significados subjacentes ao texto, características importantes para os critérios de avaliação do Exame Nacional do Ensino Médio (ENEM).
+Esses modelos operam com base nos princípios de pré-treinamento e de ajuste fino. Durante a fase do pré-treinamento, aprendem as complexidades da linguagem ao prever palavras ausentes em frases e compreender o contexto em que são usadas. Posteriormente, o ajuste fino permite que os modelos se adaptem a tarefas específicas, como a correção automática, a partir do treinamento com dados já rotulados. A capacidade de considerar a redação como uma unidade contextual, em oposição a palavras ou frases isoladas, capacita os \textit{transformers} a capturar as complexidades da linguagem, incluindo semântica, coerência e até mesmo significados subjacentes ao texto.
 
-Utilizando-se do BERT e dos modelos de linguagem baseados na arquitetura de \textit{transformers}, os sistemas de avaliação automática de redações testemunharam um avanço significativo em sua capacidade de imitar os avaliadores humanos. Esses modelos podem avaliar a qualidade completa do texto, reconhecer nuances da língua portuguesa e fornecer uma nota coerente de acordo com as competências exigidas no exame. Ao longo desta monografia, exploraremos os princípios do ajuste fino do BERT na correção automática de redações com enfoque no modelo do ENEM, os desafios abarcados por essa tarefa e, por fim, o potencial dessa abordagem em relação aos métodos tradicionais e humanos de avaliação.
+Tais qualidades desempenham um papel fundamental na correção automática de testes de conhecimento e produção textual, como no caso do Exame Nacional do Ensino Médio (ENEM), um dos principais instrumentos de avaliação educacional do Brasil. Na prova de redação desse exame, são estabelecidos critérios objetivos de pontuação que abordam competências como coesão textual, argumentação e domínio temático, características que podem ser assimiladas na etapa de pré-treinamento, por exemplo.
+
+Utilizando-se do BERT e dos modelos de linguagem baseados na arquitetura de \textit{transformers}, os sistemas de avaliação automática de redações testemunham um avanço significativo na capacidade de imitar os avaliadores humanos. Esses modelos podem avaliar a qualidade completa do texto, reconhecer nuances da língua portuguesa e fornecer uma nota coerente de acordo com critérios objetivos de correção. Ao longo desta monografia, exploraremos os princípios do ajuste fino do BERT na correção automática de redações com enfoque no modelo do ENEM, os desafios abarcados por essa tarefa e, por fim, o potencial dessa abordagem em relação aos métodos tradicionais e humanos de avaliação.
+
+\section{Motivação}
+
+O Exame Nacional do Ensino Médio (ENEM) é uma avaliação educacional de grande importância no Brasil, realizada anualmente pelo Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP). Desde sua criação em 1998, o exame tem evoluído para se tornar uma referência no processo de acesso ao ensino superior no país. A pontuação obtida pelos estudantes no ENEM é utilizada para diversos fins, sendo um dos mais notáveis o ingresso em universidades públicas.
+
+A redação é uma das principais provas do exame, cujo intuito é avaliar a defesa de um ponto de vista com respeito a um tema definido \textit{a priori}. Ela é capaz de mensurar a capacidade dos estudantes de comunicar ideias de forma clara, coerente e persuasiva, respeitando o gênero dissertativo-argumentativo e a norma padrão da língua portuguesa. Além disso, as habilidades críticas, como a análise de informações a construção de argumentos sólidos, também são levadas em conta no processo de correção da prova.
+
+A avaliação das redações é baseada em cinco competências, cujas notas podem variar de 0 a 200 em intervalos de 40 pontos. A pontuação final é calculada somando-se todos esses valores, de modo que o resultado final esteja entre 0 e 1000. O processo de correção de cada redação é feito por dois avaliadores independentes e, caso as notas divirjam em mais de 100 pontos no total ou em mais de 80 pontos em cada competência, o texto é corrigido por um terceiro profissional. Por fim, se a pontuação ainda for divergente com ambas as avaliações, a redação é avaliada por uma banca de três professores.
+
+Entretanto, a correção manual de redações produzidas por estudantes de todo o país representa um desafio logístico significativo. A disparidade entre a quantidade de profissionais e o número de estudantes que participam do exame a cada ano leva a uma sobrecarga que, além de aumentar o tempo de espera dos resultados, exige um esforço excessivo por parte dos avaliadores. % (ref)
+
+Nessa perspectiva, a automação da correção de redações utilizando modelos de linguagem pode configurar uma solução promissora para o problema. O BERT e outras arquiteturas baseadas em \textit{transformers} têm o potencial de oferecer uma avaliação objetiva das redações dos estudantes, dado que eles podem ser refinados com uma gama de exemplos de redações já avaliadas por profissionais especializados e, assim, aprender a reconhecer critérios de qualidade para cada competência com base em dados reais.
+
+Além disso, a avaliação automática permite uma resposta mais rápida e eficiente, uma vez que as notas podem ser geradas em um período mais curto. Isso facilita o processo logístico de divulgação dos resultados, reduzindo significativamente o tempo necessário para que os estudantes tenham acesso às suas pontuações.
+
+\section{Contextualização}
+
+% Falar sobre o dataset
+
+\section{Objetivos}
+
+% Citar quais são os objetivos do trabalho:
+%
+% - Desenvolver um modelo de correção automática de redações baseado no BERT (mais especificamente o BERTimbau)
+% - Comparar o modelo desenvolvido com métodos tradicionais de extração de features
+% - Comparar a acurácia e métricas de avaliação do modelo desenvolvido com as notas atribuídas pelos avaliadores humanos
+% - Analisar os resultados obtidos e discutir as vantagens e desvantagens da abordagem proposta
+% - Documentar o processo de escolha de arquitetura, treinamento com hypertuning, dificuldades encontradas e resultados
