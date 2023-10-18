@@ -14,6 +14,22 @@ Tais qualidades desempenham um papel fundamental na correção automática de te
 
 Utilizando-se do BERT e dos modelos de linguagem baseados na arquitetura de \textit{transformers}, os sistemas de avaliação automática de redações testemunham um avanço significativo na capacidade de imitar os avaliadores humanos. Esses modelos podem avaliar a qualidade completa do texto, reconhecer nuances da língua portuguesa e fornecer uma nota coerente de acordo com critérios objetivos de correção. Ao longo desta monografia, exploraremos os princípios do ajuste fino do BERT na correção automática de redações com enfoque no modelo do ENEM, os desafios abarcados por essa tarefa e, por fim, o potencial dessa abordagem em relação aos métodos tradicionais e humanos de avaliação.
 
+\section{Contextualização}
+
+A avaliação de redações em contextos educacionais é uma tarefa de grande importância, pois permite mensurar a capacidade dos estudantes de comunicar suas ideias de maneira clara, coerente e persuasiva. No entanto, no cenário de acesso a esses textos em língua portuguesa, especialmente no âmbito do ENEM no Brasil, a disponibilidade de conjuntos de dados rotulados tem sido historicamente limitada. Apesar do desenvolvimento de diversos sistemas de avaliação automática de redações em língua inglesa, adaptados para exames como o \textit{Test of English as a Foreign Language} (TOEFL), poucos surgiram para atender a textos em português ou ao modelo específico exigido pelo ENEM.
+
+Dentre os poucos estudos na área, desafios adicionais têm sido a utilização de mecanismos mais primordiais de aprendizado de máquina e a falta de transparência sobre os dados. Muitos trabalhos anteriores nesse campo utilizaram técnicas de extração de características dos textos e métodos mais simples, como regressão linear, para pontuar as redações. Além disso, as bases de textos utilizadas, muitas vezes não divulgadas publicamente, dificultavam a verificação e replicação dos resultados, limitando, inclusive, a aplicação de abordagens mais sofisticadas, como os modelos baseados em \textit{transformers}.
+
+Com o intuito de enfrentar essas barreiras, os autores originais do Essay-BR desenvolveram uma base de redações composta por 4570 textos dissertativo-argumentativos escritos por estudantes do ensino médio no Brasil e avaliados por especialistas na área de correção desses textos. Tal conjunto foi projetado especificamente para atender às necessidades da avaliação automática de redações no modelo do ENEM, dado que as notas foram atribuídas de acordo com a matriz de referência do exame. % (ref)
+
+Para criar o conjunto das redações, os autores utilizaram técnicas de raspagem de dados por meio de ferramentas de extração e de filtragem, que permitiram a coleta dos textos e avaliações, organizados entre dezembro de 2015 e abril de 2020, com base em dois sites públicos: \href{https://vestibular.brasilescola.uol.com.br/banco-de-redacoes}{Vestibular UOL} e \href{https://educacao.uol.com.br/bancoderedacoes}{Educação UOL}. Ambos os portais educacionais são fontes confiáveis, uma vez que os ensaios foram escritos por estudantes do ensino médio e avaliados por especialistas, seguindo os critérios do ENEM.
+
+A diversidade de temas presentes no Essay-BR também é uma característica notável. Com um total de 86 tópicos-base, o conjunto de dados reflete a ampla gama de proposições abordadas no ENEM, abrangendo questões relacionadas a direitos humanos, desafios políticos, movimentos populares, dentre outros. Isso torna a base de textos uma representação fiel das complexidades e diversidades temáticas enfrentadas pelos estudantes no exame, o que é fundamental para avaliações mais precisas.
+
+O conjunto de dados possui, também, uma versão estendida contendo 6479 textos e 151 temas. Essa versão foi coletada entre o período de dezembro de 2015 a agosto de 2021, com a mesma técnica utilizada para a coleta do Essay-BR. As redações da base estendida também têm notas atribuídas de acordo com a matriz de referência do ENEM, variando somente na formatação da estrutura de colunas. % (ref)
+
+A disponibilidade pública desses dados promove, por fim, a transparência e a replicabilidade da pesquisa nesse campo, possibilitando que pesquisadores apliquem abordagens mais sofisticadas para avanços na correção automática de redações. Essas bases desempenham um papel crucial no desenvolvimento de sistemas de avaliação automática em língua portuguesa e são as principais referências utilizadas por este trabalho.
+
 \section{Motivação}
 
 O Exame Nacional do Ensino Médio (ENEM) é uma avaliação educacional de grande importância no Brasil, realizada anualmente pelo Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP). Desde sua criação em 1998, o exame tem evoluído para se tornar uma referência no processo de acesso ao ensino superior no país. A pontuação obtida pelos estudantes no ENEM é utilizada para diversos fins, sendo um dos mais notáveis o ingresso em universidades públicas.
@@ -27,10 +43,6 @@ Entretanto, a correção manual de redações produzidas por estudantes de todo 
 Nessa perspectiva, a automação da correção de redações utilizando modelos de linguagem pode configurar uma solução promissora para o problema. O BERT e outras arquiteturas baseadas em \textit{transformers} têm o potencial de oferecer uma avaliação objetiva das redações dos estudantes, dado que eles podem ser refinados com uma gama de exemplos de redações já avaliadas por profissionais especializados e, assim, aprender a reconhecer critérios de qualidade para cada competência com base em dados reais.
 
 Além disso, a avaliação automática permite uma resposta mais rápida e eficiente, uma vez que as notas podem ser geradas em um período mais curto. Isso facilita o processo logístico de divulgação dos resultados, reduzindo significativamente o tempo necessário para que os estudantes tenham acesso às suas pontuações.
-
-\section{Contextualização}
-
-% Falar sobre o dataset
 
 \section{Objetivos}
 
