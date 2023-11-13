@@ -95,7 +95,7 @@ Em outro estudo relevante, conduzido por \citet{fonseca-et-al-2018}, foram adota
 
 No contexto do Brasil, apesar do avanço recente da área de AES, muitos dos estudos anteriores não disponibilizaram publicamente os conjuntos de textos utilizados, o que gera desafios para comparações robustas entre os trabalhos. Além disso, torna-se um desafio utilizar novas técnicas de avaliacão automática devido à escassez de dados representativos em língua portuguesa.
 
-\section{Representação de Textos para o Computador}
+\section{Processamento de Linguagem Natural no Computador}
 
 Ao lidarmos com textos no contexto computacional, é crucial convertê-los em formatos compreensíveis para as máquinas. Duas abordagens amplamente empregadas são os N-gramas e os Word Embeddings.
 
@@ -114,23 +114,24 @@ Ao lidar com \textit{tokens}, é possível aplicar técnicas como a tokenizaçã
     \input{../figuras/tokenization}
 \end{figure}
 
-\subsection{$N$-gramas}
+\subsection{$N$-gramas e Modelos de Predição de Palavras}
 
-% TODO: adicionar referências para os n-gramas (bookmark e manning e schuetze)
+Os $N$-gramas, em NLP, são estruturas de agrupamento de palavras ou \textit{tokens} que desempenham um papel crucial na tarefa de previsão em textos. Tratam-se de uma junção de todos os elementos subjacentes possíveis, formando conjuntos de $n$ unidades. Essas representações são utilizadas, aliadas aos conceitos da teoria de Markov e das probabilidades, para treinar modelos simples de predição de palavras.
 
-Os $N$-gramas, em NLP, são estruturas de agrupamento de palavras ou \textit{tokens} que desempenham um papel crucial na tarefa de previsão em textos. Tratam-se de uma junção de todos os elementos subjacentes possíveis, formando conjuntos como o mostrado abaixo. Essas representações são utilizadas, aliadas aos conceitos da teoria de Markov e das probabilidades, para treinar modelos simples de predição de palavras.
+\begin{figure}[H]
+    \centering
+    \caption{Exemplos de $n$-gramas para $n=1, 2, 3$. Imagem extraída de \cite{fasttext-2018}.}
+    \label{fig:bigrama}
+    \includegraphics[width=0.6\textwidth]{../figuras/ngrams.png}
+\end{figure}
 
-% colocar um diagrama que represente um n-grama aqui
+O objetivo, nesse caso, é estimar a função de probabilidade $P(W_t | W_{t-(n-1)}, \cdots, W_{t-1})$, onde $W_t$ é a palavra atual e $W_{t-(n-1)}, \cdots, W_{t-1}$ representa o histórico de palavras. Sob a perspectiva estocástica, a classificação da história anterior ($W_{t-(n-1)}, \cdots, W_{t-1}$) é essencial para predizer as novas ocorrências, já que, com uma quantia suficientemente grande de textos, é possível estimar quais palavras tendem a aparecer em sequência.
 
-O objetivo principal, nesse caso, é estimar a função de probabilidade $P(W_t \ | \ W_{t-(n-1)}, \cdots, W_{t-1})$, onde $W_t$ é a palavra atual e $W_{t-(n-1)}, \cdots, W_{t-1}$ representa o histórico de palavras. Sob a perspectiva estocástica, a classificação da história anterior ($W_{t-(n-1)}, \cdots, W_{t-1}$) é essencial para predizer as novas ocorrências.
+No entanto, lidar com cada história textual separadamente é impraticável, já que é possível receber como entrada textos totalmente novos, sem construções de referência. A teoria de Markov, assim, surge como uma solução plausível, considerando que apenas o contexto local anterior, representado pelo conjunto das últimas palavras ($W_{t-(n-1)}, ..., W_{t-1}$), influencia a escolha da próxima ocorrência. Essa suposição leva em conta que a ordem de palavras em um texto é relevante e que geralmente existe maior correlação estatística entre unidades vizinhas, conforme pontuado em \cite{bengio-et-al-2003}.
 
-No entanto, lidar com cada história textual separadamente é impraticável, já que é possível receber como entrada textos totalmente novos, sem construções de referência. A teoria de Markov, assim, surge como uma solução plausível, considerando que apenas o contexto local anterior, representado pelo conjunto das últimas palavras ($W_{t-(n-1)}, ..., W_{t-1}$), influencia a escolha da próxima ocorrência.
-
-Agrupando todas as histórias que compartilham as mesmas $n - 1$ palavras em uma mesma classe de equivalência, cria-se um modelo de Markov de ordem $n - 1$, conhecido como modelo de linguagem $N$-grama. Ao nomear tais modelos, a terminologia comumente utilizada refere-se a valores específicos de $n$, como bigrama para $n=2$ e trigrama para $n=3$. A abordagem de agrupar contextos semelhantes com base na teoria de Markov oferece uma maneira eficaz de prever palavras subsequentes em textos, com ampla aplicação no processamento de linguagem natural e análise de sentimentos.
+Agrupando todas as histórias que compartilham as mesmas $n - 1$ palavras em uma mesma classe de equivalência, cria-se um modelo de Markov de ordem $n - 1$, conhecido como modelo de linguagem $N$-grama (\cite{manning-schuetze-1999}). Ao nomear tais modelos, a terminologia comumente utilizada refere-se a valores específicos de $n$, como bigrama para $n=2$ e trigrama para $n=3$. A abordagem de agrupar contextos semelhantes com base na teoria de Markov oferece uma maneira eficaz de prever palavras subsequentes em textos, com ampla aplicação no processamento de linguagem natural e análise de sentimentos.
 
 \subsection{\textit{Word Embeddings}}
-
-\textit{Word Embeddings} são representações vetoriais de palavras que capturam relações semânticas e contextuais. Diferentemente dos $N$-gramas, que consideram apenas contextos locais, elas incorporam informações de todo o texto. Três métodos notáveis são Word2Vec, GloVe e FastText.
 
 \subsubsection{Word2Vec}
 
