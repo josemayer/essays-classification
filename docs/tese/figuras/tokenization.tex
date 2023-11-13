@@ -1,0 +1,39 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[framed, x=1pt, y=1pt, yscale=-1, xscale=1, node distance=10pt]
+
+    \node (start) at (0, 0) {};
+
+    \node [draw, rectangle, align=center, minimum height=0.75cm, below left=20pt of start] (there) {There};
+    % create another node on the right side with 10pt margin
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of there] (are) {are};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of are] (holes) {holes};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of holes] (in) {in};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of in] (reality) {reality};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of reality] (dot) {.};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of dot] (and) {And};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of and] (dots) {...};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of dots] (in2) {in};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of in2] (donuts) {donuts};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, right=10pt of donuts] (exc) {!};
+
+    \node [draw, rectangle, align=center, minimum height=0.75cm, below left=20pt and -10pt of reality] (real) {real};
+    \node [draw, rectangle, align=center, minimum height=0.75cm, below right=20pt and -10pt of reality] (ity) {-ity};
+
+    \node [align=center, anchor=center, anchor=south] (sentence) at ([yshift=-40pt]current bounding box.center) {There are holes in reality. And... in donuts!};
+
+    \draw (sentence) -- (there.north);
+    \draw (sentence) -- (are.north);
+    \draw (sentence) -- (holes.north);
+    \draw (sentence) -- (in.north);
+    \draw (sentence) -- (reality.north);
+    \draw (sentence) -- (dot.north);
+    \draw (sentence) -- (and.north);
+    \draw (sentence) -- (dots.north);
+    \draw (sentence) -- (in2.north);
+    \draw (sentence) -- (donuts.north);
+    \draw (sentence) -- (exc.north);
+
+    \draw (reality) -- (real.north);
+    \draw (reality) -- (ity.north);
+\end{tikzpicture}

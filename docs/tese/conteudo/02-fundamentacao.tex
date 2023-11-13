@@ -61,23 +61,82 @@ A tabela \ref{tab:competencia-1} abaixo, extraída da Cartilha de Redação do E
     \end{tabularx}
 \end{table}
 
-%\section{Avaliação Automática de Redações}
+\section{Avaliação Automática de Redações}
 
-%\subsection{Definição e Importância}
+A avaliação automática de redações (AES) tem se destacado significativamente nos últimos anos devido à disparidade entre a disponibilidade de profissionais capacitados para correção de textos e o número expressivo de estudantes. O avanço das técnicas de modelagem de linguagem e processamento de linguagem natural (PLN) impulsionou inúmeros trabalhos na tentativa de simplificar o processo de correção.
 
-%\subsection{Breve Histórico}
+Este campo de pesquisa é intrinsecamente multidisciplinar, demandando conhecimentos em linguística, PLN, aprendizado de máquina e estatística. A meta central consiste em desenvolver modelos capazes de atribuir notas automaticamente a redações, seguindo critérios similares aos adotados por especialistas.
 
-%\section{Representação de Textos para o Computador}
+No cenário brasileiro, embora as pesquisas tenham crescido, a AES ainda é subexplorada devido às dificuldades em acessar conjuntos de dados e recursos computacionais. Muitos dos trabalhos nacionais foram desenvolvidos com foco no modelo de redações do ENEM, valendo-se de \textit{corpus} abertos de textos de portais de correção, como o \href{https://educacao.uol.com.br/bancoderedacoes/}{UOL Redação}.
 
-%\subsection{N-gramas}
+\subsection{Definição e Importância}
 
-%\subsection{Word Embeddings}
+A avaliação automática de redações é o processo no qual algoritmos computacionais são empregados para analisar e pontuar ensaios escritos em linguagem natural. Seu ciclo operacional engloba principalmente duas fases: a codificação dos textos, transformando-os em representações compreensíveis para os computadores, e a extração de informações, cujo propósito é identificar elementos relevantes no conteúdo textual para a atribuição da pontuação.
 
-%\subsubsection{Word2Vec}
+O cerne da AES reside na capacidade de desenvolver modelos capazes de atribuir notas automaticamente, em conformidade com critérios previamente estabelecidos. Tais critérios podem ser fundamentados em modelos estatísticos ou em técnicas de aprendizado de máquina supervisionado, em que os algoritmos são treinados com conjuntos de textos já avaliados por especialistas. É possível, dessa forma, desenvolver sistemas que aprendam os padrões e nuances que guiam a correção das redações.
 
-%\subsubsection{GloVe}
+A importância da área encontra-se na necessidade de enfrentar desafios logísticos e temporais associados à correção manual de redações, especialmente em contextos educacionais massivos, como ocorre no ENEM. A utilização de sistemas automáticos de avaliação não apenas agiliza o processo de correção, reduzindo o tempo necessário para a atribuição de notas, mas também alivia o esforço demandado por profissionais, como levantado em \cite{costa-et-al-2020}.
 
-%\subsubsection{FastText}
+A objetividade, característica-chave de muitos critérios de avaliação de redações, também é um recurso importante dos sistemas automáticos. A AES contribui para uma correção mais uniforme e padronizada, minimizando possíveis variações subjetivas entre diferentes avaliadores e facilitando o processo de generalização exigido dos especialistas (\cite{myers-2003}). Além disso, a capacidade de processar grandes volumes de redações de forma eficiente a torna uma ferramenta valiosa em contextos educacionais de larga escala, onde a demanda por correção é significativa.
+
+Em suma, a avaliação automática de redações é um campo de pesquisa e aplicação promissor, integrando conhecimentos de linguística, processamento de linguagem natural, aprendizado de máquina e estatística para endereçar desafios educacionais contemporâneos.
+
+\subsection{Breve Histórico}
+
+O surgimento da AES remonta a pesquisas pioneiras da década de 1960, destacando-se o \textit{Project Essay Grader} (PEG), desenvolvido para aprimorar a avaliação em larga escala de redações (\cite{page-1966}). O PEG utiliza medidas como comprimento médio de palavras e extensão dos textos para prever a qualidade das produções. Embora tenha sido elogiado, à época, por sua comparabilidade com avaliações humanas e eficiência computacional, a primeira versão do PEG recebeu críticas por negligenciar aspectos semânticos e por sua vulnerabilidade a práticas fraudulentas. Posteriormente, na década de 1990, esses problemas foram mitigados com a incorporação de dicionários e esquemas especiais de classificação ao sistema (\cite{felicia-et-al-2002}).
+
+Um marco significativo no desenvolvimento da avaliação automática de redações no contexto nacional foi a pesquisa conduzida por \citet{amorim-et-al-2013}, com o desenvolvimento de um classificador bayesiano com cerca de 400 redações extraídas da base de dados do UOL Redações.
+
+Subsequentemente, \citet{amorim-et-al-2017} propuseram um modelo baseado em regressão, treinado com 1840 textos. O trabalho foi realizado incorporando-se, para cada produção, duas classes de características: as que dizem respeito ao ENEM, chamadas de específicas de domínio, e as gerais, inspiradas no trabalho de \citet{attali-burstein-2006}.
+
+Paralelamente, \citet{junior-et-al-2017} utilizaram técnicas de Máquinas de Vetores de Suporte (SVM) com cerca de 4000 redações extraídas do portal UOL, empregando o corretor gramatical CoGrOO (\cite{silva-2013}) para avaliar aspectos ortográficos do texto. Esse ensaio focou apenas na primeira competência do ENEM, que qualifica a adequação à modalidade formal da língua portuguesa.
+
+Em outro estudo relevante, conduzido por \citet{fonseca-et-al-2018}, foram adotadas duas abordagens distintas. Em uma delas, os autores implementaram uma arquitetura de rede neural profunda com camadas bidirecionais de Long Short-Term Memory (BiLSTM). Na outra, criaram 681 características para alimentar um regressor na avaliação de redações, atingindo um resultado promissor e de melhor desempenho. Este trabalho utilizou uma base de cerca de 56000 redações para treinar o sistema.
+
+No contexto do Brasil, apesar do avanço recente da área de AES, muitos dos estudos anteriores não disponibilizaram publicamente os conjuntos de textos utilizados, o que gera desafios para comparações robustas entre os trabalhos. Além disso, torna-se um desafio utilizar novas técnicas de avaliacão automática devido à escassez de dados representativos em língua portuguesa.
+
+\section{Representação de Textos para o Computador}
+
+Ao lidarmos com textos no contexto computacional, é crucial convertê-los em formatos compreensíveis para as máquinas. Duas abordagens amplamente empregadas são os N-gramas e os Word Embeddings.
+
+\subsection{\textit{Tokens} e a Representação de Palavras}
+
+\textit{Tokens} são unidades fundamentais de um texto, que podem englobar tanto palavras completas quanto partes delas. Formalmente, considerando um texto $T$ composto por $n$ elementos $t_1, t_2, \cdots, t_n$ que possam ser separados de forma discreta, os \textit{tokens} podem ser definidos como o conjunto $\{t_1, t_2, ..., t_n\}$ (\cite{manning-schuetze-1999}). De modo mais simples, \textit{tokens} são os elementos individuais de um texto, que podem ser divididos de forma a isolar unidades relevantes para um processamento.
+
+O conceito de \textit{tokens} é crucial na representação de palavras, possibilitando que o computador processe e compreenda o conteúdo textual de maneira estruturada. Sua identificação e segmentação adequadas são vitais para tarefas de processamento de linguagem natural, como contagem de frequência, análise sintática e desenvolvimento de modelos.
+
+Ao lidar com \textit{tokens}, é possível aplicar técnicas como a tokenização, que consiste na subdivisão de um texto em unidades individuais. Essa abordagem facilita a manipulação e análise, permitindo que algoritmos processem informações linguísticas de maneira mais eficaz.
+
+\begin{figure}[H]
+    \centering
+    \caption{Exemplo de tokenização de uma frase em palavras, subpalavras e pontuações.}
+    \label{fig:tokenizacao}
+    \input{../figuras/tokenization}
+\end{figure}
+
+\subsection{$N$-gramas}
+
+% TODO: adicionar referências para os n-gramas (bookmark e manning e schuetze)
+
+Os $N$-gramas, em NLP, são estruturas de agrupamento de palavras ou \textit{tokens} que desempenham um papel crucial na tarefa de previsão em textos. Tratam-se de uma junção de todos os elementos subjacentes possíveis, formando conjuntos como o mostrado abaixo. Essas representações são utilizadas, aliadas aos conceitos da teoria de Markov e das probabilidades, para treinar modelos simples de predição de palavras.
+
+% colocar um diagrama que represente um n-grama aqui
+
+O objetivo principal, nesse caso, é estimar a função de probabilidade $P(W_t \ | \ W_{t-(n-1)}, \cdots, W_{t-1})$, onde $W_t$ é a palavra atual e $W_{t-(n-1)}, \cdots, W_{t-1}$ representa o histórico de palavras. Sob a perspectiva estocástica, a classificação da história anterior ($W_{t-(n-1)}, \cdots, W_{t-1}$) é essencial para predizer as novas ocorrências.
+
+No entanto, lidar com cada história textual separadamente é impraticável, já que é possível receber como entrada textos totalmente novos, sem construções de referência. A teoria de Markov, assim, surge como uma solução plausível, considerando que apenas o contexto local anterior, representado pelo conjunto das últimas palavras ($W_{t-(n-1)}, ..., W_{t-1}$), influencia a escolha da próxima ocorrência.
+
+Agrupando todas as histórias que compartilham as mesmas $n - 1$ palavras em uma mesma classe de equivalência, cria-se um modelo de Markov de ordem $n - 1$, conhecido como modelo de linguagem $N$-grama. Ao nomear tais modelos, a terminologia comumente utilizada refere-se a valores específicos de $n$, como bigrama para $n=2$ e trigrama para $n=3$. A abordagem de agrupar contextos semelhantes com base na teoria de Markov oferece uma maneira eficaz de prever palavras subsequentes em textos, com ampla aplicação no processamento de linguagem natural e análise de sentimentos.
+
+\subsection{\textit{Word Embeddings}}
+
+\textit{Word Embeddings} são representações vetoriais de palavras que capturam relações semânticas e contextuais. Diferentemente dos $N$-gramas, que consideram apenas contextos locais, elas incorporam informações de todo o texto. Três métodos notáveis são Word2Vec, GloVe e FastText.
+
+\subsubsection{Word2Vec}
+
+\subsubsection{GloVe}
+
+\subsubsection{FastText}
 
 %\section{Modelos Iniciais de Avaliação Automática de Redações}
 
