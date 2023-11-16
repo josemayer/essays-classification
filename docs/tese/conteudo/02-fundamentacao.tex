@@ -97,7 +97,7 @@ No contexto do Brasil, apesar do avanço recente da área de AES, muitos dos est
 
 \section{Processamento de Linguagem Natural no Computador}
 
-Ao lidarmos com textos no contexto computacional, é crucial convertê-los em formatos compreensíveis para as máquinas. Duas abordagens amplamente empregadas são os N-gramas e os Word Embeddings.
+Ao lidarmos com textos no âmbito computacional, é crucial convertê-los em formatos adequados às máquinas. Algumas abordagens empregadas em NLP são os \textit{tokens}, os $n$-gramas, os \textit{one-hot encodings} e os \textit{word embeddings}.
 
 \subsection{\textit{Tokens} e a Representação de Palavras}
 
@@ -131,21 +131,54 @@ No entanto, lidar com cada história textual separadamente é impraticável, já
 
 Agrupando todas as histórias que compartilham as mesmas $n - 1$ palavras em uma mesma classe de equivalência, cria-se um modelo de Markov de ordem $n - 1$, conhecido como modelo de linguagem $N$-grama (\cite{manning-schuetze-1999}). Ao nomear tais modelos, a terminologia comumente utilizada refere-se a valores específicos de $n$, como bigrama para $n=2$ e trigrama para $n=3$. A abordagem de agrupar contextos semelhantes com base na teoria de Markov oferece uma maneira eficaz de prever palavras subsequentes em textos, com ampla aplicação no processamento de linguagem natural e análise de sentimentos.
 
+\subsection{\textit{One-Hot Encodings}}
+
+A técnica de \textit{one-hot encoding} é uma abordagem de representação palavras ou \textit{tokens} no âmbito do NLP. Nesse mecanismo, cada elemento do vocabulário é mapeado para um vetor binário distinto, onde todos os valores são zero, exceto aquele correspondente à posição da palavra de interesse, para a qual atribui-se o valor 1. Esse método cria representações vetoriais esparsas, cuja dimensionalidade é equivalente ao tamanho do vocabulário.
+
+A principal característica do \textit{one-hot encoding} é a independência entre as representações de palavras. Cada uma delas é tratada como uma entidade única, sem consideração pela semelhança semântica ou relações contextuais com outras unidades do vocabulário. A representação binária resultante destaca a presença ou ausência de palavras específicas, mas não incorpora informações sobre o significado relativo delas ou suas interações semânticas.
+
+Quando usado para codificar características ou classes, o \textit{one-hot encoding} pode ser considerado mais interpretável, dada sua natureza de independência explícita. A representação binária atribui um valor de 1 à categoria de interesse, com sua devida especificação, e 0 para todas as outras categorias, individualizando a presença ou ausência de uma característica e aumentando a interpretação de modelos, como mostrado por \citet{manai2023impact}.
+
+Apesar de sua simplicidade e interpretabilidade, o \textit{one-hot encoding} apresenta desvantagens significativas em termos de eficiência computacional e capacidade de generalização. A representação esparsa resulta em um alto consumo de memória, especialmente em vocabulários extensos, e a falta de captura de relações semânticas limita sua utilidade em tarefas mais complexas de NLP.
+
 \subsection{\textit{Word Embeddings}}
+
+\textit{Word embeddings} referem-se a representações vetoriais de palavras que capturam relações semânticas e contextuais. Distintas dos $N$-gramas, que se restringem a contextos locais, essas representações incorporam informações abrangentes de todo o texto.
+
+A origem dessas codificações remonta aos estágios iniciais dos modelos neurais probabilísticos de linguagem. Inspirados nas redes neurais de compressão de texto propostas por \citet{schmidhuber-heil-1996}, \citet{bengio-et-al-2003} conceberam um modelo de predição de palavras com uma estrutura análoga. Nesse trabalho, uma camada de projeção foi introduzida na rede neural, desempenhando o papel de mapear palavras para vetores de baixa dimensão.
+
+Essa abordagem serviu como fundamento para o desenvolvimento de técnicas mais refinadas de \textit{word embedding}, que se disseminaram amplamente em aplicações de NLP. A representação matemática de palavras, expressa como vetores, proporciona não apenas manipulações computacionais eficientes, mas também a modelagem de aspectos semânticos pertinentes aos textos.
+
+Lidar com representações vetoriais reais de palavras viabiliza a compreensão e exploração de relações semânticas complexas. Tais codificações permitem expressar analogias e operações sobre os elementos, como no exemplo da soma das palavras ``rei'' e ``mulher'', que resulta em vetores próximos da representação de ``rainha'' (\cite{mikolov-etal-2013-linguistic}).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{../figuras/wordembeddings.png}
+    \caption{Representação vetorial de palavras sob alguns eixos semânticos. Imagem extraída de \url{https://developers.google.com/machine-learning/crash-course/embeddings/translating-to-a-lower-dimensional-space}}
+    \label{fig:word_embeddings}
+\end{figure}
+
+O emprego de \textit{word embeddings} é, atualmente, mais frequente, já que o método confere vantagens significativas em termos de manipulação e compreensão semântica. Representações semelhantes a essa estrutura são empregadas em modelos de linguagem mais avançados, como o BERT. Três métodos notáveis de \textit{word embedding} são o Word2Vec, GloVe e FastText.
 
 \subsubsection{Word2Vec}
 
+O Word2Vec é uma técnica de \textit{word embedding} que realiza uma tradução de palavras para vetores em espaços contínuos. Este método, fundamentado em redes neurais, destaca-se por sua habilidade em preservar relações semânticas através de representações distribuídas (\cite{mikolov-etal-2013-linguistic}). O cerne do processo consiste na aprendizagem de representações que não apenas mapeiam palavras individuais, mas também capturam a proximidade semântica entre elas.
+
+Essa codificação opera de modo a otimizar a representação vetorial de palavras com base em seu contexto geral, possibilitando a criação de \textit{embeddings} que capturam a semelhança lexical e aspectos relacionados ao significado. O modelo se destaca principalmente na incorporação de analogias e de consequências lógicas, tais quais ``\textbf{falar} está para \textbf{falado} como \textbf{escrever} está para \textbf{escrito}''.
+
 \subsubsection{GloVe}
+
+O GloVe (\textit{Global Vectors for Word Representation}) apresenta uma perspectiva distinta no panorama dos \textit{word embeddings}. Ele se destaca na geração de representações vetoriais fundamentadas em estatísticas globais de coocorrência de palavras em um \textit{corpus}. Essa abordagem permite uma visão abrangente das relações semânticas que transcendem contextos imediatos.
+
+A metodologia do GloVe se baseia na construção de uma matriz de coocorrência, refletindo a probabilidade de duas palavras aparecerem juntas em um dado contexto (\cite{pennington-etal-2014-glove}). Por meio de técnicas algébricas, o modelo é usado para derivar \textit{embeddings} que melhor representem as relações semânticas capturadas por essa matriz. Dessa forma, transcende-se a limitação de representar palavras isoladamente, proporcionando uma visão holística das conexões semânticas de um texto.
 
 \subsubsection{FastText}
 
-%\section{Modelos Iniciais de Avaliação Automática de Redações}
+O FastText, uma extensão evolutiva do Word2Vec, é um tipo de codificação que atua em nível de subpalavras. Cada palavra, nesse método, é representada por $n$-gramas de suas composições. Essa inovação confere à técnica uma notável flexibilidade na manipulação de palavras desconhecidas, capturando informações semânticas em camadas mais inferiores de um texto, e permite uma maior agilidade no processo de treinamento.
 
-%\subsection{Modelos Baseados em Extração de Características}
+Considerar subpalavras no processo de geração de \textit{embeddings} capacita o FastText a representar os vocábulos como combinações de suas partes constituintes. Para a palavra \textit{where}, por exemplo, esse modelo pode considerar os trigramas \texttt{<wh, whe, her, ere, re>}, conforme delineado por \citet{bojanowski-etal-2016-enriching}. Isso se revela particularmente valioso em línguas com estrutura morfológica complexa, como a língua portuguesa, onde as palavras são formadas por múltiplos elementos significativos. Alguns vocábulos não conhecidos, nesse caso, podem ser construídos pelos $n$-gramas, dando poder de generalização ao modelo.
 
-%\subsection{Modelos Baseados em Análise de Estruturas}
-
-%\subsection{Modelos Baseados em Regressão}
+Além disso, o FastText possui uma eficácia singular no processo de treinamento, permitindo a criação de \textit{embeddings} em ambientes computacionais mais simples. Conforme evidenciado por \citet{joulin-etal-2016-bag}, métodos baseados em convoluções, tais quais os utilizados para treinar representações de Word2Vec, demonstram ser muito mais lentos que o FastText, que alcança tempos de treinamento da ordem de minutos em CPUs padrões de 20 \textit{threads}. Essa notável agilidade contribui significativamente para a adoção do FastText em tarefas de NLP que exijam rápidas codificações.
 
 %\section{Modelos de Linguagem}
 
