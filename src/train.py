@@ -8,7 +8,7 @@ import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import LambdaCallback
+from tensorflow.keras.callbacks import LambdaCallback, Callback
 from config.gpu_options import gpu_config
 
 def normalize_grades(grades):
@@ -87,7 +87,7 @@ def save_best_model(model, name):
 
 def logging_callback(logFile):
     return LambdaCallback(
-        on_train_end=lambda logs: logFile.write(str(logs)) + '\n'
+        on_train_end=lambda logs: logFile.write(str(logs) + '\n')
     )
 
 def delete_checkpoints():
@@ -104,6 +104,10 @@ def delete_checkpoints():
             os.chdir('..')
 
     os.chdir(source_directory)
+
+class DeleteCallback(tf.keras.callbacks.Callback):
+    def on_train_end(self, logs=None):
+        delete_checkpoints()
 
 def main():
     tf.compat.v1.Session(config=gpu_config())
@@ -122,7 +126,7 @@ def main():
     hypermodel = EssayHyperModel(bert)
 
     time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    logFile = open('logs/' + time + '.log', 'w+')
+    logFile = open('logs/' + time + '.log', 'a+')
 
     tuner = kt.GridSearch(
         hypermodel,
@@ -136,12 +140,14 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=6,
-        callbacks=[logging_callback(logFile), delete_checkpoints()]
+        epochs=1,
+        callbacks=[logging_callback(logFile), DeleteCallback()]
     )
 
     best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     best_model = tuner.hypermodel.build(best_model_hps)
+
+    logFile.close()
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
