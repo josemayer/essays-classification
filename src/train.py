@@ -1,5 +1,6 @@
 import os
 import sys
+import datetime
 import pandas as pd
 import tensorflow as tf
 import numpy as np
@@ -7,6 +8,7 @@ import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import LambdaCallback
 from config.gpu_options import gpu_config
 
 def normalize_grades(grades):
@@ -83,6 +85,26 @@ class EssayHyperModel(kt.HyperModel):
 def save_best_model(model, name):
     model.save('../models/' + name + '.h5')
 
+def logging_callback(logFile):
+    return LambdaCallback(
+        on_train_end=lambda logs: logFile.write(str(logs)) + '\n'
+    )
+
+def delete_checkpoints():
+    source_directory = os.path.dirname(os.path.abspath(__file__))
+    checkpoints_directory = os.path.join(source_directory, 'tuner_directory/essay_scoring')
+    os.chdir(checkpoints_directory)
+
+    for trial_dir in os.listdir():
+        if os.path.isdir(trial_dir):
+            os.chdir(trial_dir)
+            for checkpoint in os.listdir():
+                if checkpoint.endswith('.index') or checkpoint.endswith('.data-00000-of-00001'):
+                    os.remove(checkpoint)
+            os.chdir('..')
+
+    os.chdir(source_directory)
+
 def main():
     tf.compat.v1.Session(config=gpu_config())
 
@@ -99,6 +121,9 @@ def main():
 
     hypermodel = EssayHyperModel(bert)
 
+    time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    logFile = open('logs/' + time + '.log', 'w+')
+
     tuner = kt.GridSearch(
         hypermodel,
         objective='val_loss',
@@ -111,10 +136,12 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=6
+        epochs=6,
+        callbacks=[logging_callback(logFile), delete_checkpoints()]
     )
 
-    best_model = tuner.get_best_models(1)[0]
+    best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+    best_model = tuner.hypermodel.build(best_model_hps)
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
