@@ -140,7 +140,7 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=1,
+        epochs=6,
         callbacks=[logging_callback(logFile), DeleteCallback()]
     )
 
