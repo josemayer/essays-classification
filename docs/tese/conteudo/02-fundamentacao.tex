@@ -180,17 +180,198 @@ Considerar subpalavras no processo de geração de \textit{embeddings} capacita 
 
 Além disso, o FastText possui uma eficácia singular no processo de treinamento, permitindo a criação de \textit{embeddings} em ambientes computacionais mais simples. Conforme evidenciado por \citet{joulin-etal-2016-bag}, métodos baseados em convoluções, tais quais os utilizados para treinar representações de Word2Vec, demonstram ser muito mais lentos que o FastText, que alcança tempos de treinamento da ordem de minutos em CPUs padrões de 20 \textit{threads}. Essa notável agilidade contribui significativamente para a adoção do FastText em tarefas de NLP que exijam rápidas codificações.
 
-%\section{Modelos de Linguagem}
+\section{Modelos de Linguagem Neurais}
 
-%\subsection{Modelos Baseados em N-gramas}
+Os modelos de linguagem neurais são uma classe de entidades estatísticas que atribuem probabilidades a cadeias de palavras. Em geral, dado uma sequência de $t$ \textit{tokens} $\boldsymbol{W} = w_{1}, \cdots, w_{t}$ e um vocabulário de tamanho $V$, atuam de modo a aproximar a função de distribuição de probabilidades de um novo \textit{token} $w_{t+1}$, indicado por $P(w_{t+1} | W)$ (\cite{sun-iyyer-2021}). Esses modelos utilizam uma função de composição, denotada por $h$, que é aplicada sobre a sequência $W$, produzindo uma saída $\boldsymbol{s} = h(\boldsymbol{W})$.
 
-%\subsection{Redes Neurais Recorrentes}
+Como o intuito é obter uma aproximação da distribuição de probabilidades sobre o vocabulário, uma restrição fundamental é a de que a resposta $\boldsymbol{r}$ atribuída pelos modelos de linguagem, com $\boldsymbol{r} = (r_{1}, \cdots, r_{V}) \in \mathbb{R}^{V}$, tenha valores cuja soma total seja igual a 1. Para tal, utiliza-se, comumente, a função \textit{softmax} (\cite{softmax-bridle}), cujo objetivo é normalizar um vetor $\boldsymbol{z} = (z_{1}, \cdots, z_{n}) \in \mathbb{R}^{n}$:
 
-%\subsection{Long Short-Term Memory}
+\begin{equation}
+    \label{eq:softmax}
+    g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{n} e^{z_j}} \text{ , para todo $i \in \{1, \cdots, n\}$}
+\end{equation}
 
-%\subsection{Gated Recurrent Unit}
+A saída $\boldsymbol{s}$ é, então, utilizada para estimar a probabilidade de ocorrência de um novo \textit{token} $w_{t+1}$, conforme a equação \ref{eq:softmax}, a partir do mapeamento realizado por $g$. Esse processo gera a resposta $r = \widehat{P}(w_{t+1} | W)$, um vetor de distribuição de probabilidades aproximada para o \textit{token} $w_{t+1}$ sobre o vocabulário.
 
-%\section{Modelos de Linguagem Baseados em Transformadores}
+\subsection{Redes Neurais Tradicionais}
+
+As redes neurais tradicionais foram as pioneiras no desenvolvimento de modelos de linguagem. Os autores \citet{bengio-et-al-2003} foram os primeiros a lidar com essa estrutura, propondo uma arquitetura mais simples com duas camadas principais. A primeira delas realiza uma tarefa de projeção, mapeando palavras para vetores de baixa dimensão. Já a segunda atua como uma camada oculta, que recebe uma sequência de vetores e produz uma saída com base em uma função de ativação.
+
+A rede recebe como entrada representações em \textit{one-hot encoding} de palavras, que são multiplicadas por uma matriz de projeção $C \in \mathbb{R}^{d \times V}$, onde $d$ é a dimensão dos vetores de projeção e $V$ é o tamanho do vocabulário. Essa matriz é treinada para realizar o mapeamento linear de palavras para vetores de representação distribuída, como os \textit{word embeddings}. A saída da camada de projeção é uma matriz $X \in \mathbb{R}^{d \times t}$, onde $t$ é o tamanho da sequência de entrada.
+
+A matriz $X$ é, então, utilizada como entrada para a camada oculta, composta por uma quantia fixa de unidades de processamento, convencionalmente chamadas de neurônios. Cada neurônio recebe a sequência de vetores $x_{i} \in \mathbb{R}^{d}$ e produz uma saída $h_{i} \in \mathbb{R}^{d}$, calculada por:
+
+\begin{equation}
+    \label{eq:nnlm}
+    h_{i}(x_{i}) = \tanh \left( b + W x_{i} \right)
+\end{equation}
+
+onde $W \in \mathbb{R}^{d \times d}$ é uma matriz de pesos e $b \in \mathbb{R}^{d}$ é um vetor de viés. A saída dessa etapa, representada pela matriz $H \in \mathbb{R}^{d \times t}$, passa por uma camada de tratamento com a função \textit{softmax} (\ref{eq:softmax}), gerando, finalmente, um vetor que representa a aproximação da função de probabilidades.
+
+A Figura \ref{fig:nnlm} ilustra a estrutura dessa rede neural:
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de uma rede neural tradicional para modelagem de linguagem. Imagem extraída de \cite{bengio-et-al-2003}.}
+    \label{fig:nnlm}
+    \includegraphics[width=0.6\textwidth]{../figuras/nnlm.pdf}
+\end{figure}
+
+O treinamento dessa arquitetura de redes neurais tradicionais, apresentada por \citet{bengio-et-al-2003}, é realizado por meio da busca iterativa do valor $\theta$ que maximize a verossimilhança em relação às probabilidades logarítmiticas de um \textit{corpus} de tamanho $T$, representada pela equação \ref{eq:loglikelihood}. O algoritmo utilizado para essa busca é o de subida estocástica do gradiente (\cite{machine-learning-in-action}).
+
+\begin{equation}
+    \label{eq:loglikelihood}
+    \mathcal{L}(\theta) = \frac{1}{T}\sum_{t=1}^{T} \log \widehat{P}(w_{t} | w_{t-1}, \cdots, w_{1}; \theta)
+\end{equation}
+
+À época, esses modelos representaram um marco importante no âmbito do NLP. Além da abordagem pioneira na representação de palavras, futuramente estabelecidos como os \textit{embeddings}, sua capacidade de aprender funções que estimam probabilidades oferece uma base sólida para a compreensão e geração de linguagem.
+
+Todavia, a utilização dessa abordagem para lidar com textos suscitou muitas limitações na área. Uma delas é a incapacidade de capturar a dependência temporal entre as palavras em uma sequência, já que essas redes processam cada entrada de forma independente, sem considerar a ordem ou a relação cronológica entre vocábulos. Isso dificulta o uso do modelo para análise de textos cuja estrutura sequencial é essencial para o entendimento, como na avaliação automática de redações.
+
+Outro desafio enfrentado pelas redes neurais tradicionais é a dificuldade em lidar com \textit{corpus} de diferentes comprimentos. Como essas estruturas têm uma arquitetura fixa com um número predefinido de camadas e unidades, torna-se custoso processar sequências de diferentes tamanhos de forma eficiente, já que o modelo possui uma complexidade computacional exponencial em relação ao tamanho da entrada.
+
+\subsection{Redes Neurais Recorrentes (RNN)}
+
+Para superar as limitações das redes neurais tradicionais em representar relações temporais e de ordem, surgiram as Redes Neurais Recorrentes (RNNs), baseadas na arquitetura proposta por \citet{rumelhart-1986-learning}. As RNNs têm a habilidade de aprender padrões de qualquer sequência de dados, como genomas, séries temporais, entre outros. Tal capacidade as torna particularmente adequadas para lidar, também, com tarefas de compreensão de textos, tendo em vista o caráter sequencial dessas estruturas (\cite{zhang2023dive}).
+
+A arquitetura se diferencia principalmente pela introdução de um componente de memória, que é atualizado a cada novo elemento da sequência. A cada passo, a saída gerada pela rede realimenta a entrada, fazendo com que as RNNs levem em conta não só o novo dado, mas também as informações já processadas anteriormente. Assim, para um passo de tempo $t$ e uma função de ativação $f$, a saída da rede $h_t$ é calculada pela equação \ref{eq:rnn}:
+
+\begin{equation}
+    \label{eq:rnn}
+    h_t = f(W_{ih} x_t + b_{ih} + W_{hh} h_{t-1} + b_{hh})
+\end{equation}
+
+em que $x_t$ é a entrada no tempo $t$, $W_{ih}$ os pesos da camada oculta, $W_{hh}$ os pesos da ciclagem de informação (de camada oculta para camada oculta), $b_{ih}$ os vieses referentes à entrada atual e $b_{hh}$ os vieses relacionados com o histórico temporal. O termo $h_{t-1}$ representa o estado oculto anterior, incorporando informações das etapas de tempo passadas.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de uma RNN em formato simplificado e em formato sequencial aberto. Imagem adaptada de \cite{zhang2023dive}.}
+    \label{fig:rnns}
+    \input{../figuras/rnns}
+\end{figure}
+
+Para o treinamento, as RNNs utilizam o algoritmo \textit{backpropagation through time} (BPTT), que é uma variação do algoritmo de retropropagação de redes tradicionais (\cite{schmidt2019recurrent}). O BPTT, de modo geral, atua criando uma versão sequencial aberta das RNNs ao longo do tempo, conforme mostrado na figura \ref{fig:rnns}. Essa representação é, então, tratada como uma estrutura tradicional, permitindo a aplicação do algoritmo de \textit{backpropagation} comum.
+
+Algumas variações de RNNs, como as \textit{Bidirectional Recurrent Neural Networks} (BRNN), também surgiram para atender outras demandas específicas da área de NLP, como a previsão de palavras em meio de sequências. Esses modelos incorporam a capacidade de processar a informação tanto no sentido direto quanto no inverso, permitindo que a previsão de uma palavra considere não apenas o contexto precedente, mas também o subsequente. A estrutura esquemática das BRNNs pode ser vista na figura \ref{fig:brnn}.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de uma \textit{Bidirectional Recurrent Neural Network} (BRNN). Imagem adaptada de \cite{zhang2023dive}.}
+    \label{fig:brnn}
+    \input{../figuras/brnns}
+\end{figure}
+
+A possibilidade de manter estados internos ao longo das sequências permite que as RNNs capturem dependências de longo alcance em textos, um desafio enfrentado pelas redes neurais tradicionais. Além disso, a abordagem temporal habilita a utilização delas em \textit{corpus} de tamanhos variáveis, garantindo que se adaptem a diferentes contextos.
+
+No entanto, a arquitetura recorrente também apresenta desafios, sendo o mais proeminente o problema de desvanecimento ou explosão do gradiente. Durante o treinamento, os vetores responsáveis por minimizar a função de perda podem se tornar extremamente pequenos ou grandes, dificultando a atualização eficiente dos parâmetros da rede. Por estarem associadas aos pesos da camada oculta, essas variações resultam em dificuldades para aprender dependências temporais de longo prazo, já que o histórico pode ser pouco relevante ou muito influente, a depender dos gradientes. Isso compromete principalmente a capacidade da RNN de reter informações pertinentes em sequências extensas, como já pontuado por \citet{schmidt2019recurrent}.
+
+Ademais, as redes neurais recorrentes podem ser consideradas ineficientes e pouco escaláveis em relação a outras abordagens. Devido ao seu caráter sequencial, elas não conseguem processar entradas paralelamente, o que aumenta o tempo de treino de forma substancial.
+
+Para superar o problema do desvanecimento do gradiente, foram propostas variantes de RNNs, como as redes \textit{Long Short-Term Memory} (LSTM) e as \textit{Gated Recurrent Units} (GRU).
+
+\subsubsection{\textit{Long Short-Term Memory} (LSTM)}
+
+As LSTMs são arquiteturas de RNNs que introduzem unidades de memória atualizadas e controladas por meio de portas (\cite{hochreiter1997long}). Isso permite que elas capturem relações de longo prazo em sequências sem uma propagação de erros que cresça descomedidamente, tornando-as especialmente eficazes em tarefas de NLP que usam a abordagem recorrente.
+
+A estrutura de uma LSTM é formada por células de memória, que são envolvidas por três portas: de entrada ($\boldsymbol{I}_{t}$), esquecimento ($\boldsymbol{F}_{t}$) e saída ($\boldsymbol{O}_{t}$). A porta de entrada controla a atualização da célula de memória, a de esquecimento regula a retenção de informações em relação às computações anteriores e a de saída determina o valor final da unidade.
+
+\begin{equation}
+    \label{eq:lstm_input}
+    \boldsymbol{I}_{t} = f \left( \boldsymbol{W}_{xi} \boldsymbol{X}_{t} + \boldsymbol{W}_{hi} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{i} \right)
+\end{equation}
+\begin{equation}
+    \label{eq:lstm_forget}
+    \boldsymbol{F}_{t} = f \left( \boldsymbol{W}_{xf} \boldsymbol{X}_{t} + \boldsymbol{W}_{hf} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{f} \right)
+\end{equation}
+\begin{equation}
+    \label{eq:lstm_output}
+    \boldsymbol{O}_{t} = f \left( \boldsymbol{W}_{xo} \boldsymbol{X}_{t} + \boldsymbol{W}_{ho} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{o} \right)
+\end{equation}
+
+As portas são calculadas pelas equações \ref{eq:lstm_input}, \ref{eq:lstm_forget} e \ref{eq:lstm_output}, respectivamente, em que $\boldsymbol{W}_{xi}$, $\boldsymbol{W}_{hi}$, $\boldsymbol{W}_{xf}$, $\boldsymbol{W}_{hf}$, $\boldsymbol{W}_{xo}$ e $\boldsymbol{W}_{ho}$ são matrizes de pesos e $\boldsymbol{b}_{i}$, $\boldsymbol{b}_{f}$ e $\boldsymbol{b}_{o}$ são vetores de viés. A função de ativação $f$ utilizada nas portas é a sigmoide, dada pela equação \ref{eq:sigmoid}, que retorna valores entre 0 e 1. Ela é utilizada para controlar a quantidade de informação que deve ser passada para a célula de memória.
+
+\begin{equation}
+    \label{eq:sigmoid}
+    f(x) = \frac{1}{1 + e^{-x}}
+\end{equation}
+
+Conforme pontuado em \cite{schmidt2019recurrent}, as LSTMs têm, ainda, um componente de memória $\boldsymbol{\tilde{C}}_{t}$, cuja atualização é controlada pela combinação com as portas da célula. O principal objetivo desse elemento é regular a quantia de informação que deve ser passada para um novo estado de memória $\boldsymbol{C}_{t}$ com base no estado anterior $\boldsymbol{C}_{t-1}$. O cálculo de $\boldsymbol{\tilde{C}}_{t}$ é dado pela equação \ref{eq:lstm_ctilde}:
+
+\begin{equation}
+    \label{eq:lstm_ctilde}
+    \boldsymbol{\tilde{C}}_{t} = \tanh \left( \boldsymbol{W}_{xc} \boldsymbol{X}_{t} + \boldsymbol{W}_{hc} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{c} \right)
+\end{equation}
+
+em que $\boldsymbol{W}_{xc}$ e $\boldsymbol{W}_{hc}$ são matrizes de pesos e $\boldsymbol{b}_{c}$ é um vetor de viés. A função de ativação de tangente hiperbólica é utilizada para normalizar os valores da célula de memória, retornando valores entre -1 e 1. Por fim, o estado interno da célula de memória $\boldsymbol{C}_{t}$ é calculado pela expressão \ref{eq:lstm_c} e a saída da unidade $\boldsymbol{H}_{t}$ é dada pela equação \ref{eq:lstm_h}, em que $\odot$ é a multiplicação elemento a elemento, chamada de produto de Hadamard.
+
+\begin{equation}
+    \label{eq:lstm_c}
+    \boldsymbol{C}_{t} = \boldsymbol{F}_{t} \odot \boldsymbol{C}_{t-1} + \boldsymbol{I}_{t} \odot \boldsymbol{\tilde{C}}_{t}
+\end{equation}
+
+\begin{equation}
+    \label{eq:lstm_h}
+    \boldsymbol{H}_{t} = \boldsymbol{O}_{t} \odot \tanh(\boldsymbol{C}_{t})
+\end{equation}
+
+A Figura \ref{fig:lstm_architecture} ilustra a arquitetura geral das LSTMs.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de uma célula de memória das redes \textit{Long Short-Term Memory} (LSTM) em um dado tempo. Imagem adaptada de \cite{zhang2023dive}.}
+    \label{fig:lstm_architecture}
+    \input{../figuras/lstm}
+\end{figure}
+
+A capacidade de aprender dependências de longo prazo em sequências destaca as LSTMs das redes neurais recorrentes convencionais. A estrutura de memória permite que elas capturem relações entre elementos distantes em uma sequência sem que o gradiente desvaneça ou cresça excessivamente. Isso é, em particular, importante para lidar com textos extensos, como os de uma redação.
+
+Entretanto, as LSTMs não são isentas de desvantagens. Uma delas é a complexidade computacional, já que a estrutura de memória e as portas adicionam uma quantidade considerável de parâmetros ao modelo. Somado a isso, assim como no caso das RNNs convencionais, a arquitetura sequencial dessas redes não permite um processamento paralelo, agravando o problema de eficiência no treino.
+
+\subsubsection{\textit{Gated Recurrent Unit} (GRU)}
+
+Outra variação de RNNs é a \textit{Gated Recurrent Unit} (GRU), que visa simplificar a arquitetura das LSTMs, mantendo uma desempenho de avaliação semelhante. A GRU possui menos parâmetros e apenas duas portas: uma de atualização e uma de reinício (\cite{cho2014learning}). Isso a torna mais eficiente em termos computacionais e, em muitos casos, tão eficaz quanto as LSTMs.
+
+A estrutura de uma GRU possui unidades de memória controladas por duas portas principais: a de atualização $\boldsymbol{Z}_{t}$ e a de reinício $\boldsymbol{R}_{t}$. Elas regulam o fluxo de informação de maneira eficiente à medida que atuam com menos parâmetros, sem perder a propriedade das LSTMs de assimilação de relações a longo prazo.
+
+Em geral, a porta de atualização ajuda a capturar dependências de longo prazo, enquanto a de reinício auxilia na modelagem de dependências de curto prazo. A porta de atualização é calculada pela equação \ref{eq:gru_update}, enquanto a de reinício é dada pela equação \ref{eq:gru_reset}.
+
+\begin{equation}
+    \label{eq:gru_update}
+    \boldsymbol{Z}_{t} = f \left( \boldsymbol{W}_{xr} \boldsymbol{X}_{t} + \boldsymbol{W}_{hr} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{r} \right)
+\end{equation}
+\begin{equation}
+    \label{eq:gru_reset}
+    \boldsymbol{R}_{t} = f \left( \boldsymbol{W}_{xz} \boldsymbol{X}_{t} + \boldsymbol{W}_{hz} \boldsymbol{H}_{t-1} + \boldsymbol{b}_{z} \right)
+\end{equation}
+
+em que $\boldsymbol{W}_{xr}$, $\boldsymbol{W}_{hr}$, $\boldsymbol{W}_{xz}$ e $\boldsymbol{W}_{hz}$ são matrizes de pesos, $\boldsymbol{b}_{r}$ e $\boldsymbol{b}_{z}$ são vetores de viés e $f$ é a função de ativação sigmoide (\ref{eq:sigmoid}). Ambas as expressões são utilizadas para calcular um estado oculto intermediário $\tilde{\boldsymbol{H}}_{t}$, que é uma versão atualizada do estado anterior $\boldsymbol{H}_{t-1}$, conforme a equação \ref{eq:gru_hidden}.
+
+\begin{equation}
+    \label{eq:gru_hidden}
+    \tilde{\boldsymbol{H}}_{t} = \tanh \left( \boldsymbol{W}_{xh} \boldsymbol{X}_{t} + \boldsymbol{W}_{hh} (\boldsymbol{R}_{t} \odot \boldsymbol{H}_{t-1}) + \boldsymbol{b}_{h} \right)
+\end{equation}
+
+Na expressão, $\boldsymbol{W}_{xh}$ e $\boldsymbol{W}_{hh}$ são matrizes de pesos e $\boldsymbol{b}_{h}$ é um vetor de viés. A atualização da unidade de memória $\boldsymbol{H}_{t}$ é, então, calculada pela equação \ref{eq:gru}, conforme \citet{zhang2023dive}
+
+\begin{equation}
+    \label{eq:gru}
+    \boldsymbol{H}_{t} = (1 - \boldsymbol{Z}_{t}) \odot \tilde{\boldsymbol{H}}_{t} + \boldsymbol{Z}_{t} \odot \boldsymbol{H}_{t-1}
+\end{equation}
+
+A Figura \ref{fig:gru_architecture} apresenta a arquitetura da GRU, evidenciando as portas de atualização e reinício que controlam o fluxo de informação na unidade de memória.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de uma unidade de memória de uma \textit{Gated Recurrent Unit} (GRU) em um dado tempo. Imagem adaptada de \cite{zhang2023dive}.}
+    \label{fig:gru_architecture}
+    \input{../figuras/gru}
+\end{figure}
+
+As GRUs oferecem uma alternativa competitiva às LSTMs em muitas aplicações, principalmente quando a eficiência no treinamento é um requisito chave, já que ambas têm um desempenho prático semelhante. Além disso, esse modelo possui uma implementação mais simples, dada a menor complexidade de parâmetros a serem operados.
+
+No entanto, as GRUs podem ser mais limitadas em tarefas de NLP que envolvam dependências de longo prazo, já que as LSTMs têm uma estrutura de memória mais robusta capaz de assimilar adequadamente relações distantes em textos. Isso dificulta o uso desse modelo na área de avaliação automática de redações.
+
+% \section{Modelos de Linguagem Baseados em Transformadores}
 
 %\subsection{Arquitetura}
 
