@@ -85,11 +85,6 @@ class EssayHyperModel(kt.HyperModel):
 def save_best_model(model, name):
     model.save('../models/' + name + '.h5')
 
-def logging_callback(logFile):
-    return LambdaCallback(
-        on_train_end=lambda logs: logFile.write(str(logs) + '\n')
-    )
-
 def delete_checkpoints():
     source_directory = os.path.dirname(os.path.abspath(__file__))
     checkpoints_directory = os.path.join(source_directory, 'tuner_directory/essay_scoring')
@@ -109,6 +104,15 @@ class DeleteCallback(tf.keras.callbacks.Callback):
     def on_train_end(self, logs=None):
         delete_checkpoints()
 
+class LogCallback(tf.keras.callbacks.Callback):
+    def __init__(self, logFileName):
+        self.logDir = 'logs/'
+        self.logFileName = logFileName
+
+    def on_train_end(self, logs):
+        with open(self.logDir + self.logFileName, 'a+') as logFile:
+            logFile.write(str(logs) + '\n')
+
 def main():
     tf.compat.v1.Session(config=gpu_config())
 
@@ -126,7 +130,7 @@ def main():
     hypermodel = EssayHyperModel(bert)
 
     time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    logFile = open('logs/' + time + '.log', 'a+')
+    logFileName = time + '.log'
 
     tuner = kt.GridSearch(
         hypermodel,
@@ -141,13 +145,11 @@ def main():
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
         epochs=6,
-        callbacks=[logging_callback(logFile), DeleteCallback()]
+        callbacks=[LogCallback(logFileName), DeleteCallback()]
     )
 
     best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     best_model = tuner.hypermodel.build(best_model_hps)
-
-    logFile.close()
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
