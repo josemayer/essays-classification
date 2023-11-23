@@ -78,7 +78,7 @@ class EssayHyperModel(kt.HyperModel):
     def fit(self, hp, model, *args, **kwargs):
         return model.fit(
             *args,
-            batch_size=hp.Choice("batch_size", [1, 2, 3]),
+            batch_size=hp.Choice("batch_size", [2, 3, 4]),
             **kwargs,
         )
 
