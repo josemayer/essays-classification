@@ -108,10 +108,19 @@ class LogCallback(tf.keras.callbacks.Callback):
     def __init__(self, logFileName):
         self.logDir = 'logs/'
         self.logFileName = logFileName
+        self.best_val = {
+            'epoch': 0,
+            'val_loss': 9999,
+        }
+
+    def on_epoch_end(self, epoch, logs):
+        if logs['val_loss'] < self.best_val['val_loss']:
+            self.best_val['val_loss'] = logs['val_loss']
+            self.best_val['epoch'] = epoch
 
     def on_train_end(self, logs):
         with open(self.logDir + self.logFileName, 'a+') as logFile:
-            logFile.write(str(logs) + '\n')
+            logFile.write(str(self.best_val) + '\n')
 
 def main():
     tf.compat.v1.Session(config=gpu_config())
