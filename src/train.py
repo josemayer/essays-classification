@@ -33,7 +33,7 @@ def read_corpus_and_split(essay_path):
     from build_dataset import Corpus
     c = Corpus()
 
-    train, valid, test = c.read_splits(single_df = True)
+    train, valid, test = c.read_splits()
 
     train['competence'] = train['competence'].apply(normalize_grades)
     train['essay'] = train['essay'].apply(join_text)
@@ -153,7 +153,7 @@ def main():
     X_label = 'essay'
     Y_label = 'compI'
 
-    train, valid, test = read_corpus_and_split("datasets/custom")
+    train, valid, test = read_corpus_and_split("datasets/essay")
     train_encodings, train_labels = encode_data(train, X_label, Y_label, tokenizer)
     valid_encodings, valid_labels = encode_data(valid, X_label, Y_label, tokenizer)
     test_encodings, test_labels = encode_data(test, X_label, Y_label, tokenizer)
