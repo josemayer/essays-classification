@@ -77,7 +77,7 @@ class EssayHyperModel(kt.HyperModel):
 
         model = Model(inputs=input_ids, outputs=output)
 
-        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-3, 2e-5, 2e-7]))
+        optimizer = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[2e-3, 2e-5]))
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
 
         return model
@@ -153,7 +153,7 @@ def main():
     X_label = 'essay'
     Y_label = 'compI'
 
-    train, valid, test = read_corpus_and_split("datasets/essay")
+    train, valid, test = read_corpus_and_split("datasets/essay-ext")
     train_encodings, train_labels = encode_data(train, X_label, Y_label, tokenizer)
     valid_encodings, valid_labels = encode_data(valid, X_label, Y_label, tokenizer)
     test_encodings, test_labels = encode_data(test, X_label, Y_label, tokenizer)
@@ -175,7 +175,7 @@ def main():
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=6,
+        epochs=5,
         callbacks=[LogCallback(logFileName), DeleteCallback()]
     )
 
@@ -199,7 +199,7 @@ def main():
     )
 
     save_hps_to_log(best_model_hps.values, logFileName)
-    generate_plots(history, time)
+    generate_plots(history, time, Y_label)
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
