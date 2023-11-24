@@ -198,7 +198,7 @@ def main():
         ]
     )
 
-    save_hps_to_log(best_model_hps.get_config(), logFileName)
+    save_hps_to_log(best_model_hps.values, logFileName)
     generate_plots(history, time)
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
