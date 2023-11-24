@@ -8,7 +8,7 @@ import keras_tuner as kt
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import LambdaCallback, Callback
+from tensorflow.keras.callbacks import LambdaCallback, Callback, EarlyStopping
 from config.gpu_options import gpu_config
 
 def normalize_grades(grades):
@@ -150,6 +150,15 @@ def main():
 
     best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     best_model = tuner.hypermodel.build(best_model_hps)
+
+    best_model.fit(
+        np.array(train_encodings['input_ids']),
+        train_labels,
+        validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
+        epochs=15,
+        batch_size=best_model_hps.get('batch_size'),
+        callbacks=[EarlyStopping(monitor='val_loss', patience=3)]
+    )
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
