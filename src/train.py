@@ -5,6 +5,7 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
+import matplotlib.pyplot as pl
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
@@ -100,6 +101,18 @@ def delete_checkpoints():
 
     os.chdir(source_directory)
 
+def generate_plots(history, time):
+    pl.plot(history.history['loss'])
+    pl.plot(history.history['val_loss'])
+    pl.title('Model loss')
+    pl.ylabel('Loss')
+    pl.xlabel('Epoch')
+    pl.legend(['Train', 'Val'], loc='upper right')
+    pl.savefig('logs/plots/' + time + '_loss.png')
+    pl.savefig('logs/plots/' + time + '_loss.pgf')
+    pl.clf()
+
+
 class DeleteCallback(tf.keras.callbacks.Callback):
     def on_train_end(self, logs=None):
         delete_checkpoints()
@@ -161,7 +174,7 @@ def main():
     best_model = tuner.hypermodel.build(best_model_hps)
 
     checkpoint_path = '../models/c1_reg_checkpoint.h5'
-    best_model.fit(
+    history = best_model.fit(
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
@@ -175,6 +188,8 @@ def main():
             )
         ]
     )
+
+    generate_plots(history, time)
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
