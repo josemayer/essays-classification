@@ -586,4 +586,10 @@ O processo de treinamento do BERTimbau foi realizado com as mesmas duas tarefas 
 
 A disponibilidade de um modelo pré-treinado em língua portuguesa proporciona uma base sólida para uma gama de aplicações em contexto nacional, incluindo a avaliação automática de redações no formato do ENEM, explorada nesta monografia.
 
-\subsection{O BERT na Avaliação Automática de Redações}
+\subsection{O BERTimbau na Avaliação Automática de Redações do ENEM}
+
+Devido a sua capacidade de capturar relações complexas em textos da língua portuguesa, o BERTimbau pode ser utilizado na tarefa de AES no âmbito do ENEM. Com o modelo, que é responsável por codificar as redações em \textit{embeddings}, é possível obter representações matemáticas ricas em significado, permitindo a utilização de técnicas de aprendizado de máquina capazes de se especializar em atribuir notas aos textos.
+
+Destaca-se, também, que modelos de linguagem como o BERTimbau, que se beneficiam da paralelização, podem ser utilizados para avaliar redações em larga escala de forma relativamente barata, evitando os gargalos logísticos decorrentes de uma correção exclusivamente humana.
+
+Algumas das técnicas de treinamento de sistemas especializados são os algoritmos supervisionados, que podem ser otimizados para seguir um padrão de um conjunto de dados rotulados. O BERTimbau, por exemplo, pode ser acoplado a uma rede neural, treinada para classificar redações de acordo com notas atribuídas por corretores humanos. Tal é a abordagem deste trabalho, que será melhor explorada no capítulo \ref{cap:work}.
