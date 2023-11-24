@@ -56,19 +56,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Esta entrada não está em uso em tese.tex, apenas em
-% apresentacao.tex, mas isso não é um problema: você pode
-% ter um banco de dados com todos os papers que são de seu
-% interesse e, em um dado texto, citar apenas alguns deles.
-@Manual{CORBA:spec,
- title       = {{CORBA} v3.0 Specification},
- author      = {{Object Management Group}},
- shortauthor = {OMG},
- month       = jul,
- year        = {2002},
- note        = {OMG Document 02-06-33}
-}
-
 @Inproceedings{page-1966,
   author = {Ellis B. Page},
   title = {The imminence of... grading essays by computer},
@@ -139,6 +126,58 @@
     pages = {1532--1543},
 }
 
+@Inproceedings{softmax-bridle,
+ author = {Bridle, John},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {D. Touretzky},
+ pages = {},
+ publisher = {Morgan-Kaufmann},
+ title = {Training Stochastic Model Recognition Algorithms as Networks can Lead to Maximum Mutual Information Estimation of Parameters},
+ url = {https://proceedings.neurips.cc/paper_files/paper/1989/file/0336dcbab05b9d5ad24f4333c7658a0e-Paper.pdf},
+ volume = {2},
+ year = {1989}
+}
+
+@Article{sun-iyyer-2021,
+  author       = {Simeng Sun and
+                  Mohit Iyyer},
+  title        = {Revisiting Simple Neural Probabilistic Language Models},
+  journal      = {CoRR},
+  volume       = {abs/2104.03474},
+  year         = {2021},
+  url          = {https://arxiv.org/abs/2104.03474},
+  eprinttype    = {arXiv},
+  eprint       = {2104.03474},
+}
+
+
+@Book{machine-learning-in-action,
+    title        = {Machine Learning in Action},
+	author       = {Harrington, Peter},
+	year         = 2012,
+	publisher    = {Manning Publications Co.},
+	address      = {USA},
+	isbn         = 1617290181,
+}
+
+@Article{rumelhart-1986-learning,
+  title={Learning representations by back-propagating errors},
+  author={David E. Rumelhart and Geoffrey E. Hinton and Ronald J. Williams},
+  journal={Nature},
+  year={1986},
+  volume={323},
+  pages={533-536},
+  doi={10.1038/323533a0}
+}
+
+@Book{zhang2023dive,
+    title={Dive into Deep Learning},
+    author={Zhang, Aston and Lipton, Zachary C. and Li, Mu and Smola, Alexander J.},
+    publisher={Cambridge University Press},
+    url={https://d2l.ai},
+    year={2023}
+}
+
 @Article{bojanowski-etal-2016-enriching,
   author       = {Piotr Bojanowski and
                   Edouard Grave and
@@ -165,6 +204,15 @@
   url          = {http://arxiv.org/abs/1607.01759},
   eprinttype    = {arXiv},
   eprint       = {1607.01759},
+}
+
+@Article{schmidt2019recurrent,
+      title={Recurrent Neural Networks (RNNs): A gentle Introduction and Overview},
+      author={Robin M. Schmidt},
+      year={2019},
+      eprint={1912.05911},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
 }
 
 @Article{bengio-et-al-2003,
@@ -196,7 +244,7 @@
 }
 
 @Article{schmidhuber-heil-1996,
-  author={Schmidhuber, J\'{u}rgen. and Heil, Stefan},
+  author={Schmidhuber, Jürgen and Heil, Stefan},
   journal={IEEE Transactions on Neural Networks},
   title={Sequential neural text compression},
   year={1996},
@@ -260,6 +308,32 @@
   timestamp    = {Tue, 30 Oct 2018 20:39:56 +0100},
   biburl       = {https://dblp.org/rec/journals/corr/abs-1810-04805.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+@Inproceedings{bertimbau2020,
+    author = {Souza, F\'{a}bio and Nogueira, Rodrigo and Lotufo, Roberto},
+    title = {BERTimbau: Pretrained BERT Models for Brazilian Portuguese},
+    year = {2020},
+    isbn = {978-3-030-61376-1},
+    publisher = {Springer-Verlag},
+    address = {Berlin, Heidelberg},
+    url = {https://doi.org/10.1007/978-3-030-61377-8_28},
+    doi = {10.1007/978-3-030-61377-8_28},
+    booktitle = {Intelligent Systems: 9th Brazilian Conference, BRACIS 2020, Rio Grande, Brazil, October 20–23, 2020, Proceedings, Part I},
+    pages = {403–417},
+    numpages = {15},
+    location = {Rio Grande, Brazil}
+}
+
+@Article{cui-etal-2022-deep,
+    author = {Junlin Sun and Yanrong Liu and Jing Cui and Handong He},
+    year = {2022},
+    month = {03},
+    pages = {4598},
+    title = {Deep learning-based methods for natural hazard named entity recognition},
+    volume = {12},
+    journal = {Scientific Reports},
+    doi = {10.1038/s41598-022-08667-2}
 }
 
 @Article{marinho-et-al-21,
@@ -382,6 +456,18 @@
   year = 1999
 }
 
+
+@Article{hochreiter1997long,
+    author = {Sepp Hochreiter and Jürgen Schmidhuber},
+    year = {1997},
+    month = {12},
+    pages = {1735-80},
+    title = {{L}ong {S}hort-{T}erm {M}emory},
+    volume = {9},
+    journal = {Neural computation},
+    doi = {10.1162/neco.1997.9.8.1735}
+}
+
 @Inbook{fonseca-et-al-2018,
   author = {Erick Fonseca and
     Ivo Medeiros and
@@ -395,234 +481,65 @@
   doi = {10.1007/978-3-319-99722-3_18}
 }
 
-@Book{eco:09,
- author   = {Umberto Eco},
- title    = {Como se Faz uma Tese},
- edition  = 22,
- publisher= {Perspectiva},
- note     = {Tradução Gilson Cesar Cardoso de Souza},
- year     = {2009},
+@Article{cho2014learning,
+  title={Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation},
+  author={Kyunghyun Cho and Bart van Merrienboer and Caglar Gulcehre and Dzmitry Bahdanau and Fethi Bougares and Holger Schwenk and Yoshua Bengio},
+  year={2014},
+  eprint={1406.1078},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  doi={10.48550/arXiv.1406.1078}
 }
 
-@Book{zobel:04,
- author   = {Justin Zobel},
- title    = {Writing for Computer Science: The Art of Effective Communication},
- publisher= {Springer},
- edition  = 2,
- year     = {2004},
+@Article{goi2019hierarchical,
+    title = {Hierarchical gated recurrent neural network with adversarial and virtual adversarial training on text classification},
+    journal = {Neural Networks},
+    volume = {119},
+    pages = {299-312},
+    year = {2019},
+    issn = {0893-6080},
+    doi = {https://doi.org/10.1016/j.neunet.2019.08.017},
+    url = {https://www.sciencedirect.com/science/article/pii/S0893608019302345},
+    author = {Hoon-Keng Poon and Wun-She Yap and Yee-Kai Tee and Wai-Kong Lee and Bok-Min Goi},
 }
 
-@Book{waz:09,
- author   = {Raul S. Wazlawick},
- title    = {Metodologia de Pesquisa em Ciência da Computação},
- publisher= {Campus},
- edition  = 1,
- year     = {2009},
+@Article{zhu2015aligning,
+      title={Aligning Books and Movies: Towards Story-like Visual Explanations by Watching Movies and Reading Books},
+      author={Yukun Zhu and Ryan Kiros and Richard Zemel and Ruslan Salakhutdinov and Raquel Urtasun and Antonio Torralba and Sanja Fidler},
+      year={2015},
+      eprint={1506.06724},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 
-@Book{Higham:98,
- author   = {Nicholas J. Higham},
- title    = {Handbook of Writing for the Mathematical Sciences},
- edition  = 2,
- publisher= {SIAM: Society for Industrial and Applied Mathematics},
- month    = aug,
- year     = {1998},
+@Article{wu2016googles,
+      title={Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation},
+      author={Yonghui Wu and Mike Schuster and Zhifeng Chen and Quoc V. Le and Mohammad Norouzi and Wolfgang Macherey and Maxim Krikun and Yuan Cao and Qin Gao and Klaus Macherey and Jeff Klingner and Apurva Shah and Melvin Johnson and Xiaobing Liu and Łukasz Kaiser and Stephan Gouws and Yoshikiyo Kato and Taku Kudo and Hideto Kazawa and Keith Stevens and George Kurian and Nishant Patil and Wei Wang and Cliff Young and Jason Smith and Jason Riesa and Alex Rudnick and Oriol Vinyals and Greg Corrado and Macduff Hughes and Jeffrey Dean},
+      year={2016},
+      eprint={1609.08144},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 
-@book{Knuth:96,
- author   = {Donald E. Knuth and Tracy Larrabee and Paul M. Roberts},
- title    = {Mathematical Writing},
- publisher= {The Mathematical Association of America},
- month    = sep,
- year     = {1996}
+@Inproceedings{filho-etal-2018-brwac,
+    title = "The br{W}a{C} Corpus: A New Open Resource for {B}razilian {P}ortuguese",
+    author = "Wagner Filho, Jorge A.  and
+      Wilkens, Rodrigo  and
+      Idiart, Marco  and
+      Villavicencio, Aline",
+    booktitle = "Proceedings of the Eleventh International Conference on Language Resources and Evaluation ({LREC} 2018)",
+    month = may,
+    year = "2018",
+    address = "Miyazaki, Japan",
+    publisher = "European Language Resources Association (ELRA)",
+    url = "https://aclanthology.org/L18-1686",
 }
 
-@InProceedings{alves03:simi,
- author   = {Carlos E. R. Alves and Edson N. Cáceres and Frank Dehne and Siang W. Song},
- title    = {A Parallel Wavefront Algorithm for Efficient Biological Sequence Comparison},
- booktitle= {ICCSA'03: The 2003 International Conference on Computational Science and its Applications},
- year     = {2003},
- pages    = {249-258},
- month    = may,
- publisher= {Springer-Verlag}
-}
-
-@Article{MenaChalco08,
- author   = {Jesús P. Mena-Chalco and Helaine Carrer and Yossi Zana and Roberto M. Cesar-Jr.},
- title    = {Identification of Protein Coding Regions Using the Modified {G}abor-Wavelet Transform},
- journal  = {IEEE/ACM Transactions on Computational Biology and Bioinformatics},
- volume   = {5},
- pages    = {198-207},
- year     = {2008},
-}
-
-@Article{floats2014,
- author    = {Frank Mittelbach},
- title     = {How to influence the position of float environments like figure and table in {\LaTeX}?},
- journal   = {{TUGboat}},
- journalsubtitle = {Communications of the \TeX\ Users Group},
- volume    = {35},
- number    = {3},
- year      = 2014,
- url       = {tug.org/TUGboat/tb35-3/tb111mitt-float.pdf},
- urldate   = {2020-01-09},
- publisher = {\TeX\ {Users} {Group}},
- address   = {Portland ({OR}), {USA}},
-}
-
-@Techreport{alvisi99:analysisCIC,
- author      = {Lorenzo Alvisi and Elmootazbellah Elnozahy and Sriram S. Rao and Syed A. Husain and Asanka Del Mel},
- title       = {An Analysis of Comunication-Induced Checkpointing},
- institution = {Department of Computer Science, University of Texas at Austin},
- year        = {1999},
- number      = {TR-99-01},
- address     = {Austin, USA}
-}
-
-@Misc{gridftp,
- author   = {William Allcock},
- title    = {{GridFTP} Protocol Specification. {Global Grid Forum} Recommendation ({GFD}.20)},
- year     = {2003}
-}
-
-% A entrada "year" eh usada por bibtex;
-% biblatex pode usar "year" ou "date"
-@Manual{natbib,
- title       = "Reference sheet for \texttt{natbib} usage",
- author      = "Patrick W. Daly",
- year        = {2010},
- date        = {2010-09-13},
- urldate     = {2018-12-20},
- url         = {mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf},
-}
-
-@Manual{biblatex,
- title       = "The \texttt{biblatex} Package",
- author      = "Philipp Lehman and Philip Kime and Moritz Wemheuer and Audrey Boruvka and Joseph Wright",
- year        = 2018,
- date        = {2018-10-30},
- urldate     = {2018-12-20},
- url         = {mirrors.ctan.org/macros/latex/contrib/biblatex/doc/biblatex.pdf},
-}
-
-@PhdThesis{garcia01:PhD,
- author   = {Islene C. Garcia},
- title    = {Visões Progressivas de Computações Distribuídas},
- school   = {Instituto de Computação, Universidade de Campinas},
- address  = {Campinas, Brasil},
- year     = {2001},
- month    = dec
-}
-
-@Conference{bronevetsky02,
- author     = {Greg Bronevetsky and Daniel Marques and Keshav Pingali and Paul Stodghill},
- title      = {Automated Application-Level Checkpointing of {MPI} Programs},
- booktitle  = {PPoPP'03: Proceedings of the 9th ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming},
- year       = {2003},
- pages      = {84-89},
- eventdate  = {2003-06-11/2003-06-13},
- venue      = {San Diego, California}
-}
-
-@InCollection{bobaoglu93:concepts,
- author   = {Ozalp Babaoglu and Keith Marzullo},
- title    = {Consistent Global States of Distributed Systems: Fundamental Concepts and Mechanisms},
- editor   = {Sape Mullender},
- booktitle= {Distributed Systems},
- edition  = 2,
- year     = {1993},
- pages    = {55-96}
-}
-
-@MastersThesis{schmidt03:MSc,
- author   = {Rodrigo M. Schmidt},
- title    = {Coleta de Lixo para Protocolos de \emph{Checkpointing}},
- school   = {Instituto de Computação, Universidade de Campinas},
- address  = {Campinas, Brasil},
- year     = {2003},
- month    = oct
-}
-
-@online{fowler04:designDead,
- author   = {Martin Fowler},
- title    = {Is Design Dead?},
- year     = {2004},
- month    = may,
- urldate  = {2010-01-30},
- url      = {martinfowler.com/articles/designDead.html},
-}
-
-@online{FSF:GNU-GPL,
- author      = {{Free Software Foundation}},
- shortauthor = {FSF},
- title       = {{GNU} General Public License},
- year        = 2007,
- urldate     = {2010-01-30},
- url         = {www.gnu.org/copyleft/gpl.html},
-}
-
-@article{alon09:how,
- author   = {Uri Alon},
- title    = {How To Choose a Good Scientific Problem},
- journal  = {Molecular Cell},
- year     = {2009},
- volume   = {35},
- number   = {6},
- pages    = {726--728},
- publisher= {Cell Press},
- month    = sep,
- doi      = {10.1016/j.molcel.2009.09.013},
-}
-
-@book{tufte01:visualDisplay,
- author   = {Edward Tufte},
- title    = {The Visual Display of Quantitative Information},
- year     = {2001},
- edition  = 2,
- publisher= {Graphics Press},
- month    = may,
-}
-
-@Manual{usp:guidelines,
- author      = {{Universidade de São Paulo --- Sistema Integrado de Bibliotecas}},
- shortauthor = {SIBiUSP},
- title       = {Diretrizes para Apresentação de
-	        Dissertações e Teses da {USP}:
-	        Documento Eletrônico e Impresso},
- year        = 2009,
- url         = {www.teses.usp.br/index.php?option=com_content&view=article&id=52&Itemid=67},
- urldate     = {2017-11-10},
-}
-
-@online{carlis:09,
- author  = {John V. Carlis},
- title   = {Design: The Key to Writing
-            (and Advising) a One-Draft {Ph.D} Dissertation},
- year    = 2009,
- url     = {www-users.cs.umn.edu/~carlis/one-draft.pdf},
- urldate = {2017-11-10},
-}
-
-@book{craftresearch,
- author    = {Wayne C. Booth and Gregory G. Colomb and Joseph M. Williams},
- title     = {The Craft of Research},
- publisher = {The University of Chicago Press},
- year      = 2008,
-}
-
-@book{dissertjourney,
- author    = {Carol M. Roberts},
- title     = {The Dissertation Journey},
- publisher = {Corwin},
- year      = 2010,
- edition   = 2,
- location  = {Thousand Oaks, CA},
-}
-
-@manual{sbctemplate,
- author  = {Luciana P. Nedel and Rafael H. Bordini and Flávio Rech Wagner and Jomi F. H\"{u}bner},
- title   = {Instructions for Authors of {SBC} Conferences Papers and Abstracts},
- year    = 2017,
- url     = {www.sbc.org.br/documentos-da-sbc/category/169-templates-para-artigos-e-capitulos-de-livros},
- urldate = {2018-12-13},
+@Article{kudo2018sentencepiece,
+      title={SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing},
+      author={Taku Kudo and John Richardson},
+      year={2018},
+      eprint={1808.06226},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
