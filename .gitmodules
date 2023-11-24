@@ -1,3 +1,6 @@
 [submodule "src/datasets/essay"]
 	path = src/datasets/essay
 	url = git@github.com:rafaelanchieta/essay.git
+[submodule "src/datasets/essay-ext"]
+	path = src/datasets/essay-ext
+	url = git@github.com:josemayer/essay-br.git
