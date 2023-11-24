@@ -238,10 +238,10 @@ A arquitetura se diferencia principalmente pela introdução de um componente de
 
 \begin{equation}
     \label{eq:rnn}
-    h_t = f(W_{ih} x_t + b_{ih} + W_{hh} h_{t-1} + b_{hh})
+    h_t = f(\boldsymbol{W}_{ih} x_t + \boldsymbol{b}_{ih} + \boldsymbol{W}_{hh} h_{t-1} + \boldsymbol{b}_{hh})
 \end{equation}
 
-em que $x_t$ é a entrada no tempo $t$, $W_{ih}$ os pesos da camada oculta, $W_{hh}$ os pesos da ciclagem de informação (de camada oculta para camada oculta), $b_{ih}$ os vieses referentes à entrada atual e $b_{hh}$ os vieses relacionados com o histórico temporal. O termo $h_{t-1}$ representa o estado oculto anterior, incorporando informações das etapas de tempo passadas.
+em que $x_t$ é a entrada no tempo $t$, $\boldsymbol{W}_{ih}$ os pesos da camada oculta, $\boldsymbol{W}_{hh}$ os pesos da ciclagem de informação (de camada oculta para camada oculta), $\boldsymbol{b}_{ih}$ os vieses referentes à entrada atual e $\boldsymbol{b}_{hh}$ os vieses relacionados com o histórico temporal. O termo $h_{t-1}$ representa o estado oculto anterior, incorporando informações das etapas de tempo passadas.
 
 \begin{figure}[H]
     \centering
@@ -333,7 +333,7 @@ Outra variação de RNNs é a \textit{Gated Recurrent Unit} (GRU), que visa simp
 
 A estrutura de uma GRU possui unidades de memória controladas por duas portas principais: a de atualização $\boldsymbol{Z}_{t}$ e a de reinício $\boldsymbol{R}_{t}$. Elas regulam o fluxo de informação de maneira eficiente à medida que atuam com menos parâmetros, sem perder a propriedade das LSTMs de assimilação de relações a longo prazo.
 
-Em geral, a porta de atualização ajuda a capturar dependências de longo prazo, enquanto a de reinício auxilia na modelagem de dependências de curto prazo. A porta de atualização é calculada pela equação \ref{eq:gru_update}, enquanto a de reinício é dada pela equação \ref{eq:gru_reset}.
+Em geral, a porta de atualização ajuda a capturar as dependências de longo prazo, enquanto a de reinício auxilia na modelagem das dependências de curto prazo. A primeira é calculada pela equação \ref{eq:gru_update} e a segunda pela equação \ref{eq:gru_reset}:
 
 \begin{equation}
     \label{eq:gru_update}
@@ -351,7 +351,7 @@ em que $\boldsymbol{W}_{xr}$, $\boldsymbol{W}_{hr}$, $\boldsymbol{W}_{xz}$ e $\b
     \tilde{\boldsymbol{H}}_{t} = \tanh \left( \boldsymbol{W}_{xh} \boldsymbol{X}_{t} + \boldsymbol{W}_{hh} (\boldsymbol{R}_{t} \odot \boldsymbol{H}_{t-1}) + \boldsymbol{b}_{h} \right)
 \end{equation}
 
-Na expressão, $\boldsymbol{W}_{xh}$ e $\boldsymbol{W}_{hh}$ são matrizes de pesos e $\boldsymbol{b}_{h}$ é um vetor de viés. A atualização da unidade de memória $\boldsymbol{H}_{t}$ é, então, calculada pela equação \ref{eq:gru}, conforme \citet{zhang2023dive}
+Na expressão, $\boldsymbol{W}_{xh}$ e $\boldsymbol{W}_{hh}$ são matrizes de pesos e $\boldsymbol{b}_{h}$ é um vetor de viés. A atualização da unidade de memória $\boldsymbol{H}_{t}$ é, então, calculada pela equação \ref{eq:gru}, conforme \citet{zhang2023dive}.
 
 \begin{equation}
     \label{eq:gru}
@@ -371,20 +371,219 @@ As GRUs oferecem uma alternativa competitiva às LSTMs em muitas aplicações, p
 
 No entanto, as GRUs podem ser mais limitadas em tarefas de NLP que envolvam dependências de longo prazo, já que as LSTMs têm uma estrutura de memória mais robusta capaz de assimilar adequadamente relações distantes em textos. Isso dificulta o uso desse modelo na área de avaliação automática de redações.
 
-% \section{Modelos de Linguagem Baseados em Transformadores}
+\section{Modelos de Linguagem Baseados em Transformadores}
 
-%\subsection{Arquitetura}
+Os modelos de linguagem baseados em transformadores representam uma evolução significativa no campo de NLP. Introduzidos por \citet{attention2017}, foram motivados principalmente pela tarefa de tradução automática de textos, a fim de superar as limitações apresentadas pelas estruturas \textit{encoder-decoder} recorrentes e convolucionais.
 
-%\subsection{Mecanismo de Atenção}
+A arquitetura dos transformadores é baseada no mecanismo de atenção, que permite ao modelo atribuir diferentes pesos a partes da entrada, codificando a importância de elementos da sequência. Essa abordagem, em especial, possibilita a modelagem de dependências entre a entrada e a saída, flexibilizando a necessidade de recorrência.
 
-%\section{BERT: Bidirectional Encoder Representations from Transformers}
+Os chamados \textit{transformers} têm se destacado devido a sua eficácia em lidar com tarefas complexas de NLP, como tradução automática, resumo de textos e geração de respostas a perguntas. Além disso, eles são particularmente adequados para lidar com textos extensos, como os de uma redação, ao passo que permitem um processamento paralelo eficiente.
 
-%\subsection{Arquitetura}
+\subsection{Atenção}
 
-%\subsection{Pré-treinamento}
+A atenção é o cerne dos modelos de transformadores. Esse mecanismo permite assinalar diferentes importâncias aos \textit{tokens} de entrada ao realizar uma tarefa, modelando a dependência entre eles. Seu cálculo considera uma pontuação para cada par de elementos em uma sequência, normalizada pela função \textit{softmax} para obter os pesos.
 
-%\subsection{Fine-tuning}
+O mecanismo pode ser representado por meio de uma matriz de atenção, em que cada linha e coluna representam um elemento da sequência. Para o caso dos transformadores, que buscam modelar a relação interna entre os próprios \textit{tokens} de entrada, essa estrutura é chamada matriz de autoatenção. A figura \ref{fig:self_attention} ilustra esse conceito.
 
-%\subsection{BERTimbau: BERT para o Português Brasileiro}
+\begin{figure}[H]
+    \centering
+    \caption{Representação de uma matriz de autoatenção com os pesos do primeiro \textit{token} em relação a sua própria frase. Imagem inspirada em \cite{attention2017}.}
+    \label{fig:self_attention}
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \input{../figuras/self_attention_pairs}
+    \end{minipage}
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \input{../figuras/self_attention_matrix}
+    \end{minipage}
+\end{figure}
 
-%\subsection{O BERT na Avaliação Automática de Redações}
+Matematicamente, dada uma sequência de entrada $\boldsymbol{X} = (x_1, x_2, ..., x_n)$ e uma função de pontuação $a$ que mede a relevância entre dois elementos, a atenção para $x_i$ em relação a um termo $k$ da sequência ($\boldsymbol{A}(x_{i}, x_{k})$) é calculada por \ref{eq:attention}:
+
+\begin{equation}
+    \label{eq:attention}
+    \boldsymbol{A}(x_{i}, x_{k}) = \frac{e^{a(x_{i}, x_{k})}}{\sum_{j=1}^{n} e^{a(x_{i}, x_{j})}}
+\end{equation}
+
+em que $a$ pode ser uma função que compara os elementos, como o produto escalar, por exemplo. Esse processo é executado para todos os elementos da sequência, gerando pesos de atenção que destacam a importância relativa de cada elemento para a tarefa em questão. Os \textit{transformers} utilizam a função \textit{scaled dot-product} para modelar as relações, que será abordada e detalhada mais à frente.
+
+\subsection{Arquitetura}
+
+A arquitetura dos modelos de linguagem baseados em transformadores, conforme proposta por \citet{attention2017}, é caracterizada pela presença de dois módulos principais: o de codificação e o de decodificação. Ambos os componentes são organizados em camadas empilhadas, compreendendo uma estrutura que tem se destacado em tarefas variadas no âmbito do NLP.
+
+No nível de cada camada, a arquitetura incorpora módulos de atenção \textit{multihead}, os quais desempenham um papel fundamental na modelagem de relações de dependência em diferentes partes do contexto. Esses módulos possibilitam a consideração simultânea de informações distantes, promovendo a captura eficiente de padrões sequenciais complexos. Adicionalmente, em cada camada são empregadas redes tradicionais (\textit{feed-forward}) totalmente conectadas, enriquecendo a representação ao permitir a expressão de relações não lineares entre os elementos da sequência.
+
+Além desses elementos, as conexões residuais são introduzidas em cada camada para abordar questões relacionadas à propagação do gradiente. Essas conexões, ao fornecer atalhos na passagem do gradiente, facilitam a otimização em profundidade, promovendo, assim, a eficácia do treinamento em arquiteturas mais extensas.
+
+Após as conexões residuais, são feitas normalizações em cada camada, cujo objetivo é a manutenção da estabilidade e a facilitação da convergência durante o treinamento (\cite{zhang2023dive}). Tal prática contribui para a eficácia do aprendizado ao mitigar possíveis desafios associados à variação na escala dos dados em arquiteturas profundas, como no caso dos \textit{transformers}.
+
+Como os transformadores não possuem uma estrutura sequencial inerente, o modelo incorpora uma etapa de codificação posicional, essencial para fornecer informações sobre a ordem das palavras em uma sequência de entrada. Essa codificação pode ser, ainda, pré-determinada ou aprendida pela rede. Ao adicionar dados de posição às representações vetoriais, a técnica capacita o mecanismo de atenção a antecipar a ordem temporal das palavras, permitindo um melhor desempenho dos \textit{transformers} em contextos linguísticos complexos.
+
+Em suma, os modelos baseados em transformadores apresentam uma configuração estratificada que integra diversos componentes para realizar operações de atenção, conectividade total e normalização, culminando em uma abordagem poderosa para lidar, em especial, com linguagens. A figura \ref{fig:transformer_architecture} ilustra o diagrama de sua arquitetura, em que $N$ é um número arbitrário pré-definido de camadas empilhadas.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura de um modelo de linguagem baseado em transformadores. Imagem extraída de \cite{attention2017}.}
+    \label{fig:transformer_architecture}
+    \input{../figuras/transformer}
+\end{figure}
+
+Na estrutura da figura \ref{fig:transformer_architecture}, à esquerda, estão representados os módulos de codificação, que geralmente são utilizados para gerar representações matemáticas da entrada que capturem relações semânticas. Já à direita, estão os módulos de decodificação, mais focados em tarefas de previsão de \textit{tokens} em frases, geração de textos e elaboração de respostas a perguntas.
+
+O foco deste trabalho é a tarefa de avaliação automática de redações, que envolve, principalmente, a etapa de codificação das produções. A seguir, serão detalhados os mecanismos de atenção multicabeça e as subestruturas dos transformadores.
+
+\subsubsection{\textit{Multihead Attention}}
+
+Em geral, o mecanismo de atenção, conforme \citet{zhang2023dive}, pode ser representado por meio de pares de chave-valor $(k, v)$ e de consultadores $q$, em que podemos utilizar $q$ para obter informações de uma base de dados de diferentes $(k, v)$. Seu cálculo, nesse caso, é dado de acordo com a equação \ref{eq:attention_key_value_query}, em que $\mathcal{D}$ é o conjunto de pares chave-valor ($\mathcal{D} = \{(k_{1}, v_{1}), \cdots, (k_{m}, v_{m})\}$).
+
+\begin{equation}
+    \label{eq:attention_key_value_query}
+    \boldsymbol{A}(\mathcal{D}, q) = \sum_{i=1}^{m} \boldsymbol{\alpha}(q, k_{i}) v_{i}
+\end{equation}
+
+A atenção \textit{multihead} é uma extensão desse mecanismo, que permite que o modelo aprenda diferentes tipos de relações entre os elementos da sequência, ao mesmo tempo em que reduz a complexidade computacional ao considerar uma abordagem paralelizável com matrizes de consultadores ($Q$), chaves ($K$) e valores ($V$) (\cite{attention2017}).
+
+Os pesos, nessa técnica, são calculados por meio de uma projeção linear da entrada, seguida da função de atenção \textit{scaled dot-product} abaixo e de uma projeção linear da saída. O cálculo dessa função utiliza uma escala inversamente proporcional à dimensão dos consultadores e chaves $d_{k}$ (\ref{eq:scaled_dot_product}):
+
+\begin{equation}
+    \label{eq:scaled_dot_product}
+    \boldsymbol{\alpha}(Q, K) = \text{softmax} \left( \frac{QK^{T}}{\sqrt{d_{k}}} \right)
+\end{equation}
+
+O valor da atenção resultante é, então, dado pela equação \ref{eq:multihead_attention}.
+
+\begin{equation}
+    \label{eq:multihead_attention}
+    \boldsymbol{A}(Q, K, V) = \boldsymbol{\alpha}(Q, K)V
+\end{equation}
+
+Ao fim, o resultado de cada cabeça é concatenado e novamente projetado linearmente para formar a representação final $\boldsymbol{M}_{a}$, cujo cálculo é dado pela equação \ref{eq:multihead_weights}:
+
+\begin{equation}
+    \label{eq:multihead_weights}
+    \boldsymbol{M}_{a} = \text{concat}(\boldsymbol{H}_{1}, \cdots, \boldsymbol{H}_{h})W^{O}
+\end{equation}
+
+em que $\boldsymbol{H}_{i}$, para $i \in \{1, \cdots, h\}$, é a saída da $i$-ésima cabeça de atenção e $W^{O}$ é uma matriz de pesos. $\boldsymbol{H}_{i}$ é dado, em função de $\boldsymbol{A}$, pela expressão \ref{eq:head_by_attn}.
+
+\begin{equation}
+    \label{eq:head_by_attn}
+    \boldsymbol{H}_{i} = \boldsymbol{A}(\boldsymbol{Q}_{i}W_{i}^{Q}, \boldsymbol{K}_{i}W_{i}^{K}, \boldsymbol{V}_{i}W_{i}^{V})
+\end{equation}
+
+Em que $W_{i}^{Q}$, $W_{i}^{K}$ e $W_{i}^{V}$ são matrizes de pesos e $\boldsymbol{Q}_{i}$, $\boldsymbol{K}_{i}$ e $\boldsymbol{V}_{i}$ são vetores de consultadores, chaves e valores da $i$-ésima cabeça, respectivamente. A figura \ref{fig:multihead_attention} ilustra o cálculo da atenção \textit{multihead}.
+
+\begin{figure}[H]
+    \centering
+    \caption{À direita, o cálculo da atenção \textit{multihead}. À esquerda, a função de atenção \textit{scaled dot-product}. Imagem adaptada de \cite{attention2017}.}
+    \label{fig:multihead_attention}
+    \begin{minipage}{0.35\textwidth}
+        \centering
+        \input{../figuras/scaled-dot_product}
+    \end{minipage}
+    \begin{minipage}{0.5\textwidth}
+        \centering
+        \input{../figuras/multihead_attention}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{Codificador}
+
+O codificador processa a entrada sequencial e produz uma representação contextualizada para cada elemento. Cada camada desse módulo contém duas subcamadas subsequentes: a de atenção \textit{multihead} e a de redes neurais totalmente conectadas.
+
+A subcamada de atenção \textit{multihead} permite que o modelo aprenda diferentes tipos de relações entre os elementos da sequência já codificados. Cada cabeça opera em uma projeção linear da entrada, e as saídas são concatenadas e novamente projetadas linearmente para formar a representação final $\boldsymbol{X}$, após a normalização e conexão residual de $\boldsymbol{M}_{a}$, conforme mostrado na seção anterior.
+
+Em seguida, a saída é submetida a uma rede neural totalmente conectada, que consiste em duas camadas lineares com uma função de ativação ReLU (indicada pela equação \ref{eq:relu}) entre elas. Essa subcamada permite que o modelo aprenda representações não lineares dos dados, enriquecendo a representação final.
+
+\begin{equation}
+    \label{eq:relu}
+    f(x) = \max(0, x)
+\end{equation}
+
+A saída de uma camada do codificador, então, é dada pela normalização e conexão residual da equação \ref{eq:encoder_layer}:
+
+\begin{equation}
+    \label{eq:encoder_layer}
+    \boldsymbol{S} = f(\boldsymbol{W_{1}} \boldsymbol{X} + \boldsymbol{b}_{1})\boldsymbol{W_{2}} + \boldsymbol{b}_{2}
+\end{equation}
+
+em que $\boldsymbol{W_{1}}$, $\boldsymbol{W_{2}}$, $\boldsymbol{b}_{1}$ e $\boldsymbol{b}_{2}$ são parâmetros da rede neural totalmente conectada (matrizes de pesos e vetores de vieses, nessa ordem) e $f$ é a função de ativação ReLU (\ref{eq:relu}).
+
+\subsubsection{Decodificador}
+
+O decodificador gera uma sequência de saída contextualizada com base na representação do codificador. Assim como no módulo de codificação, cada camada dessa etapa também possui subcamadas de atenção \textit{multihead} e redes neurais totalmente conectadas. O que difere o módulo decodificador, entretanto, é a inclusão de uma nova camada de atenção com máscara antes da entrada das representações codificadas.
+
+A máscara de atenção é utilizada para evitar que o modelo tenha acesso a informações futuras durante a geração da sequência de saída. Ela faz com que o mecanismo de atenção atue nas codificações dos elementos de modo a suprimir antecipações temporais da sequência pelos \textit{transformers}.
+
+O cálculo final de uma camada do codificador é dado de maneira similar ao da seção anterior, com a inclusão das codificações de entrada e da nova etapa de atenção com máscara.
+
+\section{BERT: \textit{Bidirectional Encoder Representations from Transformers}}
+
+Os modelos baseados em transformadores representaram um marco significativo no avanço da área do NLP, redefinindo as fronteiras da compreensão de linguagem por máquinas. Entre as inovações motivadas pelo surgimento dos \textit{transformers}, destaca-se o BERT (\textit{Bidirectional Encoder Representations from Transformers}), um modelo introduzido por \citet{bert2018} que revolucionou o processamento de sequências textuais pelo computador.
+
+O BERT se diferencia ao capturar, de maneira única, o contexto bidirecional das palavras em uma sequência, superando as limitações dos modelos unidirecionais. Sua arquitetura, baseada em múltiplas camadas de transformadores empilhadas, permite uma codificação contextual robusta dos elementos, capturando relações não só com as palavras anteriores, mas também subsequentes.
+
+O processo de pré-treinamento do BERT permite ao modelo compreender contextos de forma sofisticada, promovendo uma representação rica de palavras ou \textit{tokens} em textos. Além disso, a arquitetura pode ser utilizada como base para o treinamento de sistemas especialistas por meio, geralmente, do aprendizado supervisionado. Neste trabalho, por exemplo, o BERT é refinado para atuar como um classificador de textos, com o objetivo de avaliar redações no modelo do ENEM.
+
+A fim de se adequar à diversidade linguística, foram desenvolvidas algumas variações do modelo a partir de seu pré-treinamento em conjuntos de textos específicos de uma dada linguagem. Dentre as versões, destaca-se o BERTimbau, uma variante do BERT com foco no português brasileiro (\cite{bertimbau2020}). As diferentes alternativas existentes demonstram a capacidade de generalização do modelo, que é capaz de aprender particularidades semânticas e sintáticas de diversas línguas.
+
+O BERT representa não apenas um avanço técnico, mas também uma ferramenta essencial para diversas aplicações em NLP, incluindo a tarefa de AES. A seguir, abordaremos brevemente os aspectos de sua arquitetura, o processo de treinamento e refinamento, a variação do modelo para a língua portuguesa e, por fim, como o BERT pode ser usado para atribuir notas às redações do ENEM de forma automática.
+
+\subsection{Arquitetura}
+
+A arquitetura do BERT é meticulosamente projetada para capturar de forma eficaz as relações contextuais em uma sequência de palavras, incorporando transformadores bidirecionais em múltiplas camadas. Cada camada desempenha um papel crucial na codificação contextual, permitindo que o modelo compreenda as dependências tanto à esquerda quanto à direita de cada unidade. A Figura \ref{fig:bert_architecture} esquematiza a arquitetura geral do BERT.
+
+\begin{figure}[H]
+    \centering
+    \caption{Arquitetura geral do BERT, considerando a codificação dos \textit{tokens} e as camadas de transformadores. Imagem adaptada de \cite{cui-etal-2022-deep}}.
+    \label{fig:bert_architecture}
+    \input{../figuras/bert_architecture}
+\end{figure}
+
+Antes de serem processadas pelas camadas de transformadores, as sequências de palavras de entrada são codificadas em \textit{tokens}. A tokenização divide as palavras em unidades menores, permitindo que o modelo lide de maneira mais flexível com diferentes formas e variações linguísticas. A tokenização em subpalavras também ajuda no desafio de lidar com o vocabulário diversificado e a variabilidade morfológica presente em diferentes idiomas.
+
+Alguns \textit{tokens} especiais também são levados em conta na modelagem. O \textit{token} \texttt{[CLS]}, por exemplo, é adicionado ao início de cada sequência e representa a tarefa de classificação da sentença. Já o \textit{token} \texttt{[SEP]} é adicionado ao final de cada sentença, indicando seu fim. Esses elementos especiais são importantes, em particular, na etapa de treinamento, já que tanto pares de pergunta e resposta quanto textos completos a serem classificados podem ser modelados sem mudar o formato da sequência de entrada (\cite{bert2018}).
+
+O BERT mantém, além disso, vetores que codificam a posição e o segmento de cada \textit{token} na sequência, permitindo que o modelo entenda a ordem de palavras e o mecanismo de separação de sentenças. Essas codificações são essenciais para a compreensão de textos, já que a posição das palavras é relevante para o significado.
+
+As camadas de transformadores, então, recebem como entrada os vetores de \textit{tokens}, posição e segmento, codificando relações contextuais entre as palavras. Cada camada, por meio das conexões bidirecionais entre todos os \textit{transformers} anteriores, gera uma representação dos vocábulos de entrada. Isso possibilita ao BERT capturar interações complexas entre os elementos, fornecendo uma compreensão aprimorada de uma sequência. As saídas de todas as camadas são combinadas para formar uma representação final enriquecida.
+
+Os autores \citet{bert2018} propõem duas arquiteturas do BERT: uma basilar ($\text{\textbf{BERT}}_{\text{\textbf{BASE}}}$) de 12 camadas de transformadores empilhadas, com 12 cabeças de atenção em cada uma, e outra extendida ($\text{\textbf{BERT}}_{\text{\textbf{LARGE}}}$) de 24 camadas de transformadores, com 16 cabeças de atenção em cada uma.
+
+% continuar daqui SEM se matar
+
+\subsection{Pré-treinamento e \textit{Fine-tuning}}
+
+O pré-treinamento é a etapa em que um modelo de linguagem é capaz de aprender aspectos semânticos e contextuais das sequências, a partir de um grande conjunto de dados. Para cumprir esse objetivo, o BERT é submetido a duas tarefas: a predição de palavras mascaradas e a identificação de relação entre duas sentenças (\cite{zhang2023dive}).
+
+A primeira tarefa, chamada \textit{Masked Language Model} (MLM), consiste em mascarar aleatoriamente 15\% dos \textit{tokens} de entrada e treinar o modelo para prever as palavras mascaradas com base no contexto global.  Essa abordagem promove a compreensão bidirecional de uma sequência, já que as relações de dependência interna de um texto são assimiladas à medida que o BERT otimiza seus parâmetros para cumprir tal função.
+
+Já a segunda tarefa, chamada \textit{Next Sentence Prediction} (NSP), envolve a apresentação de pares de sentenças ao modelo, que deve prever se uma ocorre após a outra no texto original. Essa atribuição aprimora a capacidade do BERT de entender relações semânticas, sendo especialmente útil em contextos de resposta a perguntas ou realização de inferências lógicas.
+
+O pré-treinamento do BERT, em \cite{bert2018}, foi realizado a partir de um conjunto de dados de 3,3 bilhões de palavras, das quais 2,5 bilhões são de artigos do Wikipédia em inglês e 800 milhões são do BookCorpus, um compilado de cerca de 7000 livros autopublicados (\cite{zhu2015aligning}). Além disso, para a tokenização das palavras, foram utilizadas as codificações do algoritmo WordPiece (\cite{wu2016googles}), com um vocabulário de 30000 \textit{tokens}.
+
+Após o pré-treinamento, o BERT pode ser ajustado para tarefas específicas por meio de um processo chamado \textit{fine-tuning}. Durante essa etapa, o modelo pode ser acoplado a outras arquiteturas, que são treinadas em conjuntos de dados rotulados de acordo com a tarefa desejada. Uma mesma versão pré-treinada do BERT pode ser aplicada a diferentes tarefas de NLP, uma vez que o modelo pré-treinado já possui uma compreensão sofisticada da linguagem, o que caracteriza essa abordagem, também, como menos computacionalmente custosa.
+
+A figura \ref{fig:bert_training_tuning} ilustra o processo de pré-treinamento e \textit{fine-tuning} do BERT.
+
+\begin{figure}[H]
+    \centering
+    \caption{Processo de pré-treinamento do BERT, à esquerda, e uso de modelos pré-treinados no \textit{fine-tuning}, à direita. Imagem extraída de \cite{bert2018}.}
+    \label{fig:bert_training_tuning}
+    \includegraphics[width=\textwidth]{../figuras/bert_training_tuning}
+\end{figure}
+
+\subsection{BERTimbau: BERT para o Português Brasileiro}
+
+A demanda por capturar nuances complexas da língua portuguesa impulsionou o desenvolvimento do BERTimbau, uma adaptação do BERT para o português brasileiro (\cite{bertimbau2020}). Sem alterar a arquitetura ou o processo de pré-treinamento, essa versão usa uma base de textos distinta para ajustar os pesos do modelo, aprendendo a lidar com o vocabulário nacional.
+
+O BERTimbau foi treinado utilizando o conjunto de dados brWaC (\cite{filho-etal-2018-brwac}), uma extensa coleção de textos em português extraídos e filtrados de páginas da web. A base é formada por 2,7 bilhões de \textit{tokens}, que foram reprocessados por \citet{bertimbau2020} para a retirada de \textit{mojibakes}\footnote{Os \textit{mojibakes} são anomalias que acometem textos da internet devido a erros de interpretação de caracteres em diferentes codificações. A exemplo, a palavra "redação", na codificação UTF-8, será mostrada como "redaÃ§Ã£o", na codificação ISO-8859-1. Esses problemas são, em particular, comuns na língua portuguesa devido à riqueza em acentuação.} e \textit{tags} de marcação reminescentes.
+
+A tokenização do conjunto de dados, crucial para lidar com a morfologia variada do português, foi realizada pelo algoritmo SentencePiece (\cite{kudo2018sentencepiece}), com posterior conversão para o formato do WordPiece a fim de manter consistência com os \textit{tokens} do BERT original.
+
+O processo de treinamento do BERTimbau foi realizado com as mesmas duas tarefas de \citet{bert2018}, a partir da predição de palavras ocultas em sentenças e da identificação de relação entre duas frases. Essas etapas contribuem, em especial, para a capacidade do modelo em compreender complexidades semânticas do português, aprimorando sua eficácia ao lidar com textos nessa língua. O BERTimbau também está disponível nas variantes basilar e extensa, ambas com a mesma quantidade de parâmetros das versões do BERT original, o que permite adaptações de acordo com a necessidade da tarefa final a ser realizada.
+
+A disponibilidade de um modelo pré-treinado em língua portuguesa proporciona uma base sólida para uma gama de aplicações em contexto nacional, incluindo a avaliação automática de redações no formato do ENEM, explorada nesta monografia.
+
+\subsection{O BERT na Avaliação Automática de Redações}
