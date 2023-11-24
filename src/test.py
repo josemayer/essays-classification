@@ -77,10 +77,10 @@ def main():
 
         print(f"Model for {comp} ======")
         metrics = model_evaluation(model, test_encodings, test_labels)
-        evaluation[comp] = generate_metrics(metrics, path=(current_path + "../metrics/"))
+        evaluation[comp] = generate_metrics(metrics)
         print("")
 
-    save_evaluation(evaluation)
+    save_evaluation(evaluation, path=(current_path + "../metrics/"))
 
 def model_evaluation(model, test_encodings, test_labels):
     preds = grade_multiple_essays(model, test_encodings)
