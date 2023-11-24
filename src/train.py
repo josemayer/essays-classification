@@ -5,12 +5,18 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 import keras_tuner as kt
+import matplotlib as mpl
 import matplotlib.pyplot as pl
 from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.layers import Input, Dense, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import LambdaCallback, Callback, ModelCheckpoint
 from config.gpu_options import gpu_config
+
+mpl.rcParams.update({
+    "font.family": "sans-serif",
+    "font.size": "8",
+})
 
 def normalize_grades(grades):
     return [int(x / 40) for x in grades]
@@ -101,17 +107,20 @@ def delete_checkpoints():
 
     os.chdir(source_directory)
 
-def generate_plots(history, time):
+def generate_plots(history, time, label):
     pl.plot(history.history['loss'])
     pl.plot(history.history['val_loss'])
-    pl.title('Model loss')
-    pl.ylabel('Loss')
-    pl.xlabel('Epoch')
-    pl.legend(['Train', 'Val'], loc='upper right')
-    pl.savefig('logs/plots/' + time + '_loss.png')
+    pl.title(f"Função de Perda em Treino ({label})")
+    pl.ylabel('Perda')
+    pl.xlabel('Época')
+    pl.legend(['Treinamento', 'Validação'], loc='upper right')
     pl.savefig('logs/plots/' + time + '_loss.pgf')
     pl.clf()
 
+def save_hps_to_log(hps, file_name):
+    with open('logs/' + file_name, 'a+') as file:
+        file.write("---\n")
+        file.write(str(hps))
 
 class DeleteCallback(tf.keras.callbacks.Callback):
     def on_train_end(self, logs=None):
@@ -173,12 +182,12 @@ def main():
     best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     best_model = tuner.hypermodel.build(best_model_hps)
 
-    checkpoint_path = '../models/c1_reg_checkpoint.h5'
+    checkpoint_path = '../models/c1_reg.h5'
     history = best_model.fit(
         np.array(train_encodings['input_ids']),
         train_labels,
         validation_data=(np.array(valid_encodings['input_ids']), valid_labels),
-        epochs=15,
+        epochs=50,
         batch_size=best_model_hps.get('batch_size'),
         callbacks=[
             ModelCheckpoint(
@@ -189,12 +198,11 @@ def main():
         ]
     )
 
+    save_hps_to_log(best_model_hps.get_config(), logFileName)
     generate_plots(history, time)
 
     evaluation = best_model.evaluate(np.array(test_encodings['input_ids']), test_labels)
     print("Evaluation results:", evaluation)
-
-    save_best_model(best_model, 'c1_reg')
 
 if __name__ == "__main__":
     main()
