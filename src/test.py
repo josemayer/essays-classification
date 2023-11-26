@@ -80,7 +80,7 @@ def main():
         evaluation[comp] = generate_metrics(metrics)
         print("")
 
-    save_evaluation(evaluation, path=(current_path + "../metrics/"))
+    save_evaluation(evaluation, path=(current_path + "/../metrics/"))
 
 def model_evaluation(model, test_encodings, test_labels):
     preds = grade_multiple_essays(model, test_encodings)
