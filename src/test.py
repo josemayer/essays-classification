@@ -65,7 +65,7 @@ def main():
     current_path = os.getcwd()
     saved_models_path = current_path + '/../models/'
 
-    _, _, test = read_corpus_and_split("datasets/custom")
+    _, _, test = read_corpus_and_split("datasets/essay-ext")
 
     evaluation = {}
     for comp in Y_labels:
