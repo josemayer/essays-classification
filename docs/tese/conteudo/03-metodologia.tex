@@ -1,0 +1,116 @@
+\chapter{Metodologia}
+\label{chap:work}
+
+Com a base teórica contemplada na seção \ref{chap:fund}, podemos utilizar os recursos de aprendizado profundo e processamento de linguagem natural para criar um modelo especialista capaz de avaliar, automaticamente, redações no modelo do ENEM.
+
+Utilizamos a base de dados aberta Essay-BR, disponibilizada em sua versão simples (\cite{marinho-et-al-21}) e estendida (\cite{marinho-et-al-22}), para treinar modelos avaliadores. Cada modelo é capaz de, isoladamente, atribuir nota a uma competência do exame, dada uma redação como entrada. % add-custom-info: além disso, utilizamos uma base de dados customizada...
+
+Construímos a arquitetura de cada sistema de avaliação com base no \textit{fine-tuning} do BERT, com uma camada de entrada de codificação dos textos e uma camada de redes neurais especializadas na atribuição da nota, que gera a saída correspondente à pontuação obtida. A versão do BERT utilizada neste trabalho é o BERTimbau, modelo pré-treinado em textos cujo idioma é o português.
+
+Por fim, após o treinamento dos modelos, avaliamos cada um por meio de métricas de desempenho do aprendizado, como a acurácia e perda, e métricas específicas do ENEM, como avaliação consistente entre competências.
+
+\section{Bases de dados}
+
+Para treinar modelos de avaliação automática, partimos de uma abordagem de aprendizado supervisionado, utilizando conjuntos de redações já avaliadas por especialistas humanos. A base de dados que orientou a elaboração desse trabalho foi a Essay-BR, uma coletânea de textos no modelo do ENEM com avaliações que seguem a a matriz de referência do exame (\cite{marinho-et-al-21}; \cite{marinho-et-al-22}). % add-custom-info
+
+As redações foram extraídas de dois portais educacionais abertos do Brasil, \href{https://vestibular.brasilescola.uol.com.br/banco-de-redacoes}{Vestibular UOL}\footnote{\url{https://vestibular.brasilescola.uol.com.br}} e \href{https://educacao.uol.com.br/bancoderedacoes}{Educação UOL}\footnote{\url{https://educacao.uol.com.br/bancoderedacoes}}, que disponibilizam a correção dos textos por especialistas da área publicamente. Em ambos os \textit{websites}, as redações estão divididas em diferentes propostas de temas, de modo que alunos podem submeter suas escritas para a avaliação.
+
+Para a extração, foi utilizado um \textit{web crawler}, sistema encarregado de raspar de dados de sites, que coletou o conteúdo das páginas de avaliação individual em diferentes eixos temáticos. Os resultados obtidos, então, foram filtrados, com o intuito de extrair o texto e outras informações relevantes das redações, como as avaliações por competências e a pontuação geral.
+
+Neste trabalho, para lidar com as bases de redações, utilizamos a biblioteca Pandas\footnote{\url{https://pandas.pydata.org}}, que fornece estruturas e ferramentas de análise de dados de alto desempenho, e a biblioteca Matplotlib\footnote{\url{https://matplotlib.org}}, que permite a visualização das informações em diferentes formatos de gráficos.
+
+\subsection{Essay-BR Básica}
+\label{subsec:essay-br-basic}
+
+A primeira versão da Essay-BR, a que vamos referenciar como básica, contém uma quantidade de 4570 textos coletados de dezembro de 2015 a abril de 2020, contemplando uma variedade de 86 temas. Desse total, 798 redações foram coletados do Educação UOL, enquanto que 3772 redações foram obtidas do Vestibular UOL.
+
+A base de dados contém 5 informações de cada redação: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto (\texttt{essay}), as notas das competências (\texttt{competence}) e a pontuação final (\texttt{score}). O título, por ser opcional, pode ser vazio. Além disso, o texto da redação é codificado como uma lista de parágrafos. Por fim, a nota das competências é formatada como uma lista de números, que podem valer de 0 a 200 cada, em passos de 40. Um exemplo das entradas desse conjunto de dados pode ser visto na tabela \ref{tab:essay-br-basic}.
+
+\begin{table}[H]
+    \caption{Amostra de três entradas da Essay-BR básica, com identificador de tema, título, redação, notas das competências e pontuação final.}
+    \label{tab:essay-br-basic}
+    \centering
+    \begin{tabularx}{\textwidth}{rXXlr}
+        \toprule
+        \texttt{prompt} & \texttt{title} & \texttt{essay} & \texttt{competence} & \texttt{score} \\
+        \midrule
+             83 & Prática de esportes & [Praticar esportestêm sido o meio mais comum de... & [0, 0, 0, 0, 0] & 0 \\
+             56 & Cenário carcerário, ... & [Superlotação, revoltas, condições de vida prec... & [120, 120, 120, 120, 120] & 600 \\
+             75 & \texttt{NaN} & [Atualmente o projeto de liberação do porte de ... & [120, 80, 80, 120, 120] & 520 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+A pontuação final (\texttt{score}) é uma informação redundante, já que pode ser calculada a partir da soma das notas das competências. No entanto, podemos utilizá-la para uma análise exploratória dos dados. A figura \ref{fig:essay-br-basic-analysis} mostra a distribuição de pontuações finais e das notas das competências da base de dados.
+
+\begin{figure}[H]
+    \caption{Distribuição da pontuação final (à esquerda) e das notas das competências (à direita) da Essay-BR básica.}
+    \label{fig:essay-br-basic-analysis}
+    \centering
+    \resizebox{\textwidth}{!}{\input{../figuras/essay-br-base-analysis.pgf}}
+\end{figure}
+
+Esse conjunto de dados exibe uma distribuição próxima da distribuição normal para as pontuações finais e notas de competências, com médias ligeiramente superiores às medianas. Destaca-se, ainda, a variabilidade nas notas de competências, sendo algumas mais concentradas, como a competência I, e outras mais dispersas, como a competência V.
+
+Os autores \citet{marinho-et-al-21} disponibilizaram uma biblioteca em Python para facilitar a manipulação dos dados das redações, permitindo a criação de \textit{dataframes}\footnote{Os \textit{dataframes} são as estruturas de dados de tabela do Pandas, que permitem a visualização, manipulação e extração de informações de uma base.} e divisão das instâncias em conjuntos de treino, teste e validação. O código-fonte e o conteúdo correspondente estão disponíveis no GitHub\footnote{\url{https://github.com/rafaelanchieta/essay}}.
+
+\subsection{Essay-BR Estendida}
+
+A versão estendida da Essay-BR contém uma quantidade de 6579 textos em 151 temas distintos, coletados de dezembro de 2015 a agosto de 2021. Além das instâncias já mencionadas em \ref{subsec:essay-br-basic}, ela contém mais 1160 redações coletadas do portal Vestibular UOL e 849 redações extraídas do trabalho de \citet{amorim-et-al-2017}.
+
+A base de dados contém 9 informações de cada redação: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto (\texttt{essay}), as notas das competências (\texttt{c1}, \texttt{c2}, \texttt{c3}, \texttt{c4} e \texttt{c5}) e a pontuação final (\texttt{score}). Diferentemente da organização anterior, as notas das competências são separadas em 5 colunas distintas na versão estendida.
+
+Um exemplo das entradas da base estendida pode ser visto na tabela \ref{tab:essay-br-extended}.
+
+\begin{table}[H]
+    \centering
+    \caption{Amostra de três entradas da Essay-BR estendida, com identificador do tema, título, redação, competências divididas em cinco colunas e pontuação final.}
+    \label{tab:essay-br-extended}
+    \begin{tabularx}{\textwidth}{rXXrrrrrr}
+        \toprule
+        \texttt{prompt} & \texttt{title} & \texttt{essay} & \texttt{c1} & \texttt{c2} & \texttt{c3} & \texttt{c4} & \texttt{c5} & \texttt{score} \\
+        \midrule
+             63 & Impactos da Modernidade & [O Brasil é reconhecido internacionalmente no q... & 160 & 120 & 120 & 120 & 120 & 640 \\
+             69 & O problema do agrotóxico & [Um dos assuntos discutidos e tendo suas inform... & 120 & 120 &  80 & 120 &  80 & 520 \\
+             51 & Inteligibilidade Paradoxal & [O livro bíblico de Neemias registra que por vo... & 120 & 160 & 120 & 160 & 120 & 680 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Para a análise exploratória dos dados, utilizamos a mesma abordagem anterior. A figura \ref{fig:essay-br-extended-analysis} mostra a distribuição de pontuações finais e das notas das competências da Essay-BR estendida.
+
+\begin{figure}[H]
+    \caption{Distribuição da pontuação final (à esquerda) e das notas das competências (à direita) da Essay-BR estendida.}
+    \label{fig:essay-br-extended-analysis}
+    \centering
+    \resizebox{\textwidth}{!}{\input{../figuras/essay-br-extended-analysis.pgf}}
+\end{figure}
+
+Em geral, é possível notar o mesmo padrão da base anterior, mas com um pequeno acréscimo na frequência de notas finais maiores. Observa-se que esse aumento se deu, principalmente, devido ao incremento de notas 160 para a competência I.
+
+Os autores \citet{marinho-et-al-22} também disponibilizaram uma biblioteca de manipulação de dados para a Essay-BR estendida, cujo código-fonte pode ser acessado pelo GitHub\footnote{\url{https://github.com/lplnufpi/essay-br}}. Entretanto, devido a pequenas diferenças na formatação e leitura dos dados, utilizamos, neste trabalho, um \textit{fork}\footnote{\url{https://github.com/josemayer/essay-br}} adaptado da dependência, para fins de consistência.
+
+% \subsection{Essay-BR Customizada}
+% add-custom-info: falar sobre a base de dados extraídas também do UOL, mas adequadamente limpada para evitar os problemas da essay-br. falar sobre as professoras utilizadas para avaliar a consistência.
+
+\section{Pré-processamento}
+
+
+
+%\section{Modelagem}
+
+%\subsection{Arquitetura}
+
+%\subsection{Implementação}
+
+% falar sobre quais são os hiperparâmetros aqui e ganchar pra seção sequente
+
+%\subsection{Otimização de Hiperparâmetros}
+
+%\subsection{Avaliação}
+
+%\section{Treinamento}
+
+%\subsection{Ambiente}
+
+%\subsection{Configurações}
