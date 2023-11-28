@@ -1,0 +1,118 @@
+\usetikzlibrary{positioning, calc, shapes.misc, shapes.geometric, backgrounds}
+
+\begin{tikzpicture}[
+    >=latex,
+    bertemb/.style={rectangle, rounded corners, draw, inner sep=0.3cm, minimum width=1.5cm},
+    neuron/.style={circle, draw, minimum width=1cm, minimum height=1cm},
+    every path/.style={thick},
+]
+    \definecolor{blue-bert}{RGB}{201,218,248}
+    \definecolor{darkblue-bert}{RGB}{80, 129, 188}
+    \node[label={north:Entrada}] (essay) {\includegraphics[width=3em]{document-icon.pdf}};
+
+    \node[draw, right of=essay, rotate=-90, minimum width=8cm, yshift=2em] (token_layer) {\textit{Tokens} da redação};
+
+
+    \node[bertemb, right of=token_layer, xshift=2em, yshift=3.05cm] (emb1) {$E_{\text{CLS}}$};
+    \node[bertemb, below of=emb1, yshift=-2.45em] (emb2) {$E_{1}$};
+    \node[bertemb, below of=emb2, yshift=-2.45em] (emb3) {$E_{2}$};
+    \node[bertemb, below of=emb3, yshift=-2.45em] (emb4) {$E_{N}$};
+    \node[below of=emb3, yshift=-0.2em] (dots) {$\vdots$};
+
+    \node[draw, circle, right of=emb1, xshift=3em] (enc11) {\tiny Encoder};
+    \node[draw, circle, right of=emb2, xshift=3em] (enc12) {\tiny Encoder};
+    \node[draw, circle, right of=emb3, xshift=3em] (enc13) {\tiny Encoder};
+    \node[draw, circle, right of=emb4, xshift=3em] (enc14) {\tiny Encoder};
+
+    \node[draw, circle, right of=enc11, xshift=2em] (enc21) {\tiny Encoder};
+    \node[draw, circle, right of=enc12, xshift=2em] (enc22) {\tiny Encoder};
+    \node[draw, circle, right of=enc13, xshift=2em] (enc23) {\tiny Encoder};
+    \node[draw, circle, right of=enc14, xshift=2em] (enc24) {\tiny Encoder};
+
+    \node[bertemb, right of=enc21, xshift=3em] (t1) {$T_{\text{CLS}}$};
+    \node[bertemb, right of=enc22, xshift=3em] (t2) {$T_{1}$};
+    \node[bertemb, right of=enc23, xshift=3em] (t3) {$T_{2}$};
+    \node[bertemb, right of=enc24, xshift=3em] (t4) {$T_{N}$};
+    \node[below of=t3, yshift=-0.2em] (dots) {$\vdots$};
+
+    % fully connect encs
+    \foreach \i in {1,2,3,4} {
+        \foreach \j in {1,2,3,4} {
+            \draw[->] (enc1\i.east) -- (enc2\j.west);
+        }
+    }
+
+    \draw[rounded corners] ($ (emb1.north west) + (-0.3cm, 0.5cm) $) rectangle ($ (emb4.south east) + (0.3cm, -0.5cm) $);
+    \draw[rounded corners] ($ (t1.north west) + (-0.3cm, 0.5cm) $) rectangle ($ (t4.south east) + (0.3cm, -0.5cm) $);
+
+    % fully connect embs to encs1
+    \foreach \i in {1,2,3,4} {
+        \foreach \j in {1,2,3,4} {
+            \draw[->] (emb\i.east) -- (enc1\j.west);
+        }
+    }
+
+    % connect each enc2 to its corresponding t
+    \foreach \i in {1,2,3,4} {
+        \draw[->] (enc2\i.east) -- (t\i.west);
+    }
+
+    \draw[->] (token_layer.north) -- ($ ($ 0.5*(emb1.west) + 0.5*(emb4.west) $) + (-0.3cm, 0) $);
+    \draw[->] (essay.east) -- (token_layer.south);
+
+
+    \draw[rounded corners, draw=darkblue-bert] ($ (token_layer.south west) + (-0.3cm, 0.3cm) $) rectangle ($ (t4.south east) + (0.6cm, -0.8cm) $);
+
+    % internal middle vert node
+    \node (middle-vert) at ($ 0.5*(t2.south) + 0.5*(t3.north) $) {};
+
+    \draw[->, darkblue-bert] ($ (middle-vert) + (3.2em, 0) $) -- ($ (middle-vert) + (4.3em, 0) $);
+
+    % first hidden layer
+    \node[draw, neuron, right of=middle-vert, xshift=4em, yshift=3.5cm] (neuron11) {};
+    \node[draw, neuron, below of=neuron11, yshift=-0.5em] (neuron12) {};
+    \node[draw, neuron, below of=neuron12, yshift=-0.5em] (neuron13) {};
+    \node[draw, neuron, right of=middle-vert, xshift=4em, yshift=-3.5cm] (neuron14) {};
+    \node[draw, neuron, above of=neuron14, yshift=0.5em] (neuron15) {};
+    \node[draw, neuron, above of=neuron15, yshift=0.5em] (neuron16) {};
+    \node[below of=neuron13, yshift=-0.3em] (dots1) {$\vdots$};
+
+    % second hidden layer
+    \node[draw, neuron, right of=neuron13, xshift=5em, yshift=2em] (neuron21) {};
+    \node[draw, neuron, right of=neuron16, xshift=5em, yshift=-2em] (neuron22) {};
+    \node[right of=dots1, xshift=5em] (dots2) {$\vdots$};
+
+    % third hidden layer
+    \node[draw, neuron, right of=neuron21, xshift=5em, yshift=2em] (neuron31) {};
+    \node[draw, neuron, right of=neuron22, xshift=5em, yshift=-2em] (neuron32) {};
+    \node[draw, neuron, below of=neuron31, yshift=-0.5em] (neuron33) {};
+    \node[draw, neuron, above of=neuron32, yshift=0.5em] (neuron34) {};
+    \node[right of=dots2, xshift=5em] {$\vdots$};
+
+    % fully connect first hidden layer with second
+    \foreach \i in {1,2,3,4,5,6} {
+        \foreach \j in {1,2} {
+            \draw[->] (neuron1\i) -- (neuron2\j);
+        }
+    }
+
+    % fully connect second hidden layer with third
+    \foreach \i in {1,2} {
+        \foreach \j in {1,2,3,4} {
+            \draw[->] (neuron2\i) -- (neuron3\j);
+        }
+    }
+
+    \node[draw, neuron, right of=middle-vert, xshift=25em, label={north:Saída}] (output) {};
+
+    % fully connect third hidden layer with output
+    \foreach \i in {1,2,3,4} {
+        \draw[->] (neuron3\i) -- (output);
+    }
+
+    \draw[rounded corners, dashed] ($ (neuron11.north west) + (-0.5cm, 0.4cm) $) rectangle ($ (neuron14.south east) + (16em, -0.4cm) $);
+
+    \node[above of=emb1, text=darkblue-bert, yshift=1.6em, xshift=-3em] (bert-label) {\sffamily \textbf{BERTimbau}};
+    \node[above of=neuron11, yshift=0.3em, xshift=4em] (nn-label) {\sffamily \textbf{Rede neural especialista}};
+
+\end{tikzpicture}

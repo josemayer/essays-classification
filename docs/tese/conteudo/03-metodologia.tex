@@ -1,116 +1,351 @@
 \chapter{Metodologia}
 \label{chap:work}
 
-Com a base teórica contemplada na seção \ref{chap:fund}, podemos utilizar os recursos de aprendizado profundo e processamento de linguagem natural para criar um modelo especialista capaz de avaliar, automaticamente, redações no modelo do ENEM.
+Com a fundamentação teórica fornecida na seção \ref{chap:fund}, exploramos as potencialidades do aprendizado profundo e do processamento de linguagem natural para desenvolver um modelo especializado na avaliação automática de redações, seguindo o formato do ENEM.
 
-Utilizamos a base de dados aberta Essay-BR, disponibilizada em sua versão simples (\cite{marinho-et-al-21}) e estendida (\cite{marinho-et-al-22}), para treinar modelos avaliadores. Cada modelo é capaz de, isoladamente, atribuir nota a uma competência do exame, dada uma redação como entrada. % add-custom-info: além disso, utilizamos uma base de dados customizada...
+A base de dados Essay-BR, disponível em suas versões simples (\cite{marinho-et-al-21}) e estendida (\cite{marinho-et-al-22}), desempenhou um papel crucial no treinamento dos modelos avaliadores. Cada modelo foi treinado para atribuir notas a competências específicas do exame, oferecendo uma abordagem granular e detalhada para a avaliação automatizada de redações.
 
-Construímos a arquitetura de cada sistema de avaliação com base no \textit{fine-tuning} do BERT, com uma camada de entrada de codificação dos textos e uma camada de redes neurais especializadas na atribuição da nota, que gera a saída correspondente à pontuação obtida. A versão do BERT utilizada neste trabalho é o BERTimbau, modelo pré-treinado em textos cujo idioma é o português.
+A arquitetura de cada sistema de avaliação foi concebida com base no processo de \textit{fine-tuning} do BERT. A estrutura envolve uma camada de entrada para a codificação dos textos e uma camada de redes neurais especializadas na atribuição de notas. O modelo escolhido para o refinamento foi o BERTimbau, pré-treinado em uma ampla gama de textos em língua portuguesa, com o objetivo principal de capturar nuances linguísticas específicas --- essenciais para a correta avaliação de redações no contexto do ENEM.
 
-Por fim, após o treinamento dos modelos, avaliamos cada um por meio de métricas de desempenho do aprendizado, como a acurácia e perda, e métricas específicas do ENEM, como avaliação consistente entre competências.
+Após a fase de treinamento, submetemos cada modelo a uma avaliação rigorosa, empregando métricas de desempenho padrão, como proporção de correspondência exata e perda, além de métricas específicas do ENEM, como a avaliação consistente entre competências. Este processo visa assegurar não só a precisão geral dos sistemas avaliadores, mas também a coerência e alinhamento com os critérios estabelecidos pelo exame.
 
 \section{Bases de dados}
 
 Para treinar modelos de avaliação automática, partimos de uma abordagem de aprendizado supervisionado, utilizando conjuntos de redações já avaliadas por especialistas humanos. A base de dados que orientou a elaboração desse trabalho foi a Essay-BR, uma coletânea de textos no modelo do ENEM com avaliações que seguem a a matriz de referência do exame (\cite{marinho-et-al-21}; \cite{marinho-et-al-22}). % add-custom-info
 
-As redações foram extraídas de dois portais educacionais abertos do Brasil, \href{https://vestibular.brasilescola.uol.com.br/banco-de-redacoes}{Vestibular UOL}\footnote{\url{https://vestibular.brasilescola.uol.com.br}} e \href{https://educacao.uol.com.br/bancoderedacoes}{Educação UOL}\footnote{\url{https://educacao.uol.com.br/bancoderedacoes}}, que disponibilizam a correção dos textos por especialistas da área publicamente. Em ambos os \textit{websites}, as redações estão divididas em diferentes propostas de temas, de modo que alunos podem submeter suas escritas para a avaliação.
+As redações foram extraídas de dois portais educacionais abertos do Brasil, \href{https://vestibular.brasilescola.uol.com.br/banco-de-redacoes}{Vestibular UOL}\footnote{\url{https://vestibular.brasilescola.uol.com.br}} e \href{https://educacao.uol.com.br/bancoderedacoes}{Educação UOL}\footnote{\url{https://educacao.uol.com.br/bancoderedacoes}}, que disponibilizam a correção dos textos por especialistas da área publicamente. Em ambos os \textit{websites}, existem diferentes propostas de temas semelhantes às do ENEM, de modo que alunos podem submeter suas escritas para a avaliação de acordo com sua preferência.
 
-Para a extração, foi utilizado um \textit{web crawler}, sistema encarregado de raspar de dados de sites, que coletou o conteúdo das páginas de avaliação individual em diferentes eixos temáticos. Os resultados obtidos, então, foram filtrados, com o intuito de extrair o texto e outras informações relevantes das redações, como as avaliações por competências e a pontuação geral.
+Para popular a base, os autores da Essay-BR utilizaram um \textit{web crawler}, sistema encarregado de raspar de dados de sites, que coletou o conteúdo das páginas de avaliação individual em diferentes eixos temáticos. Os resultados obtidos, então, foram filtrados, com o intuito de extrair o texto e outras informações relevantes das redações, como as avaliações por competências e a pontuação geral.
 
-Neste trabalho, para lidar com as bases de redações, utilizamos a biblioteca Pandas\footnote{\url{https://pandas.pydata.org}}, que fornece estruturas e ferramentas de análise de dados de alto desempenho, e a biblioteca Matplotlib\footnote{\url{https://matplotlib.org}}, que permite a visualização das informações em diferentes formatos de gráficos.
+Neste trabalho, visando lidar com a base de textos, utilizamos a biblioteca Pandas\footnote{\url{https://pandas.pydata.org}}, que fornece estruturas e ferramentas de análise de dados de alto desempenho, e a biblioteca Matplotlib\footnote{\url{https://matplotlib.org}}, que permite a visualização das informações em diferentes formatos de gráficos. A Essay-BR possui duas variantes de tamanho, as quais detalharemos nas seções \ref{subsec:essay-br-basic} e \ref{subsec:essay-br-extended} a seguir.
 
 \subsection{Essay-BR Básica}
 \label{subsec:essay-br-basic}
 
-A primeira versão da Essay-BR, a que vamos referenciar como básica, contém uma quantidade de 4570 textos coletados de dezembro de 2015 a abril de 2020, contemplando uma variedade de 86 temas. Desse total, 798 redações foram coletados do Educação UOL, enquanto que 3772 redações foram obtidas do Vestibular UOL.
+A primeira versão da Essay-BR, a que vamos referenciar como básica, contém uma quantidade de 4570 textos coletados de dezembro de 2015 a abril de 2020, contemplando uma variedade de 86 temas distintos. Desse total, 798 redações foram coletadas do Educação UOL, enquanto que 3772 redações foram obtidas do Vestibular UOL, produzindo uma coletânea rica em diferentes conteúdos e estilos de escrita.
 
-A base de dados contém 5 informações de cada redação: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto (\texttt{essay}), as notas das competências (\texttt{competence}) e a pontuação final (\texttt{score}). O título, por ser opcional, pode ser vazio. Além disso, o texto da redação é codificado como uma lista de parágrafos. Por fim, a nota das competências é formatada como uma lista de números, que podem valer de 0 a 200 cada, em passos de 40. Um exemplo das entradas desse conjunto de dados pode ser visto na tabela \ref{tab:essay-br-basic}.
+Cada instância na base de dados é caracterizada por cinco informações relacionadas às redações: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto propriamente dito (\texttt{essay}), as notas atribuídas às competências (\texttt{competence}), e a pontuação final (\texttt{score}). O título, por ser opcional, pode ser vazio. Além disso, a redação é representada como uma lista de parágrafos isolados.
 
-\begin{table}[H]
-    \caption{Amostra de três entradas da Essay-BR básica, com identificador de tema, título, redação, notas das competências e pontuação final.}
-    \label{tab:essay-br-basic}
-    \centering
-    \begin{tabularx}{\textwidth}{rXXlr}
-        \toprule
-        \texttt{prompt} & \texttt{title} & \texttt{essay} & \texttt{competence} & \texttt{score} \\
-        \midrule
-             83 & Prática de esportes & [Praticar esportestêm sido o meio mais comum de... & [0, 0, 0, 0, 0] & 0 \\
-             56 & Cenário carcerário, ... & [Superlotação, revoltas, condições de vida prec... & [120, 120, 120, 120, 120] & 600 \\
-             75 & \texttt{NaN} & [Atualmente o projeto de liberação do porte de ... & [120, 80, 80, 120, 120] & 520 \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+A avaliação das redações é expressa por meio de notas atribuídas a diferentes competências (\texttt{competence}), representadas por uma lista de 5 números inteiros que variam de 0 a 200, com incrementos de 40. Tais notas, essenciais para uma correção multifacetada, são as responsáveis por formar a pontuação final (\texttt{score}). Embora o valor de \texttt{score} seja, em essência, uma informação redundante, já que pode ser derivado da soma das notas de cada competência, sua inclusão na base de dados revela-se valiosa para a análise exploratória dos dados.
 
-A pontuação final (\texttt{score}) é uma informação redundante, já que pode ser calculada a partir da soma das notas das competências. No entanto, podemos utilizá-la para uma análise exploratória dos dados. A figura \ref{fig:essay-br-basic-analysis} mostra a distribuição de pontuações finais e das notas das competências da base de dados.
+A Figura \ref{fig:essay-br-basic-analysis} ilustra, de forma visual, a distribuição das pontuações finais e das notas individuais das competências na Essay-BR básica. Essa representação gráfica revela padrões iniciais sobre a variabilidade e a dispersão dos resultados obtidos pelos alunos, proporcionando uma visão panorâmica das características gerais de avaliação.
 
 \begin{figure}[H]
-    \caption{Distribuição da pontuação final (à esquerda) e das notas das competências (à direita) da Essay-BR básica.}
+    \caption{Gráficos com a distribuição da pontuação final (à esquerda) e a distribuição das notas das competências (à direita) da Essay-BR básica.}
     \label{fig:essay-br-basic-analysis}
     \centering
     \resizebox{\textwidth}{!}{\input{../figuras/essay-br-base-analysis.pgf}}
 \end{figure}
 
-Esse conjunto de dados exibe uma distribuição próxima da distribuição normal para as pontuações finais e notas de competências, com médias ligeiramente superiores às medianas. Destaca-se, ainda, a variabilidade nas notas de competências, sendo algumas mais concentradas, como a competência I, e outras mais dispersas, como a competência V.
+Pela figura \ref{fig:essay-br-basic-analysis}, nota-se que o conjunto de dados apresenta uma distribuição com características próximas a de uma normal para as pontuações finais e notas de competências, contendo médias ligeiramente superiores às medianas. Destaca-se, ainda, a variabilidade nas notas de competências, sendo algumas mais concentradas --- como a competência I --- e outras mais dispersas --- como a competência V.
 
-Os autores \citet{marinho-et-al-21} disponibilizaram uma biblioteca em Python para facilitar a manipulação dos dados das redações, permitindo a criação de \textit{dataframes}\footnote{Os \textit{dataframes} são as estruturas de dados de tabela do Pandas, que permitem a visualização, manipulação e extração de informações de uma base.} e divisão das instâncias em conjuntos de treino, teste e validação. O código-fonte e o conteúdo correspondente estão disponíveis no GitHub\footnote{\url{https://github.com/rafaelanchieta/essay}}.
+Para a Essay-BR básica, os autores \citet{marinho-et-al-21} disponibilizaram uma biblioteca em Python que visa facilitar a manipulação dos dados das redações, permitindo desde a criação de \textit{dataframes}\footnote{Os \textit{dataframes} são as estruturas de dados de tabela do Pandas, que permitem a visualização, manipulação e extração de informações de uma base.} até a divisão das instâncias em conjuntos de treino, teste e validação. O código-fonte e o conteúdo correspondente estão disponíveis no GitHub\footnote{\url{https://github.com/rafaelanchieta/essay}}.
 
 \subsection{Essay-BR Estendida}
+\label{subsec:essay-br-extended}
 
-A versão estendida da Essay-BR contém uma quantidade de 6579 textos em 151 temas distintos, coletados de dezembro de 2015 a agosto de 2021. Além das instâncias já mencionadas em \ref{subsec:essay-br-basic}, ela contém mais 1160 redações coletadas do portal Vestibular UOL e 849 redações extraídas do trabalho de \citet{amorim-et-al-2017}.
+A versão estendida da Essay-BR contém uma quantidade de 6579 textos em 151 temas distintos, coletados de dezembro de 2015 a agosto de 2021. Além das instâncias já mencionadas em \ref{subsec:essay-br-basic}, ela contém mais 1160 redações reunidas do portal Vestibular UOL, em um período de tempo mais atualizado, e 849 redações extraídas do trabalho de \citet{amorim-et-al-2017}.
 
-A base de dados contém 9 informações de cada redação: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto (\texttt{essay}), as notas das competências (\texttt{c1}, \texttt{c2}, \texttt{c3}, \texttt{c4} e \texttt{c5}) e a pontuação final (\texttt{score}). Diferentemente da organização anterior, as notas das competências são separadas em 5 colunas distintas na versão estendida.
+A base de dados contém instâncias com 9 informações diferentes a respeito das redações: o identificador do tema (\texttt{prompt}), o título (\texttt{title}), o texto (\texttt{essay}), as notas das competências (\texttt{c1}, \texttt{c2}, \texttt{c3}, \texttt{c4} e \texttt{c5}) e a pontuação final (\texttt{score}). Ao contrário da organização anterior, as notas das competências são separadas em 5 colunas distintas na versão estendida.
 
-Um exemplo das entradas da base estendida pode ser visto na tabela \ref{tab:essay-br-extended}.
-
-\begin{table}[H]
-    \centering
-    \caption{Amostra de três entradas da Essay-BR estendida, com identificador do tema, título, redação, competências divididas em cinco colunas e pontuação final.}
-    \label{tab:essay-br-extended}
-    \begin{tabularx}{\textwidth}{rXXrrrrrr}
-        \toprule
-        \texttt{prompt} & \texttt{title} & \texttt{essay} & \texttt{c1} & \texttt{c2} & \texttt{c3} & \texttt{c4} & \texttt{c5} & \texttt{score} \\
-        \midrule
-             63 & Impactos da Modernidade & [O Brasil é reconhecido internacionalmente no q... & 160 & 120 & 120 & 120 & 120 & 640 \\
-             69 & O problema do agrotóxico & [Um dos assuntos discutidos e tendo suas inform... & 120 & 120 &  80 & 120 &  80 & 520 \\
-             51 & Inteligibilidade Paradoxal & [O livro bíblico de Neemias registra que por vo... & 120 & 160 & 120 & 160 & 120 & 680 \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-Para a análise exploratória dos dados, utilizamos a mesma abordagem anterior. A figura \ref{fig:essay-br-extended-analysis} mostra a distribuição de pontuações finais e das notas das competências da Essay-BR estendida.
+Para a análise exploratória dos dados, utilizamos a mesma abordagem da seção \ref{subsec:essay-br-basic}. A figura \ref{fig:essay-br-extended-analysis} mostra a distribuição de pontuações finais e das notas das competências da Essay-BR estendida.
 
 \begin{figure}[H]
-    \caption{Distribuição da pontuação final (à esquerda) e das notas das competências (à direita) da Essay-BR estendida.}
+    \caption{Gráficos com a distribuição da pontuação final (à esquerda) e a distribuição das notas das competências (à direita) da Essay-BR estendida.}
     \label{fig:essay-br-extended-analysis}
     \centering
     \resizebox{\textwidth}{!}{\input{../figuras/essay-br-extended-analysis.pgf}}
 \end{figure}
 
-Em geral, é possível notar o mesmo padrão da base anterior, mas com um pequeno acréscimo na frequência de notas finais maiores. Observa-se que esse aumento se deu, principalmente, devido ao incremento de notas 160 para a competência I.
+Em geral, a partir da figura \ref{fig:essay-br-extended-analysis}, é possível notar o mesmo padrão da versão anterior, mas com um pequeno acréscimo na frequência de notas finais maiores. Observa-se que esse aumento ocorreu, principalmente, devido ao incremento de notas 160 para a primeira competência, dado o aumento excepcional nessa categoria.
 
-Os autores \citet{marinho-et-al-22} também disponibilizaram uma biblioteca de manipulação de dados para a Essay-BR estendida, cujo código-fonte pode ser acessado pelo GitHub\footnote{\url{https://github.com/lplnufpi/essay-br}}. Entretanto, devido a pequenas diferenças na formatação e leitura dos dados, utilizamos, neste trabalho, um \textit{fork}\footnote{\url{https://github.com/josemayer/essay-br}} adaptado da dependência, para fins de consistência.
+Os autores \citet{marinho-et-al-22} também disponibilizaram uma biblioteca de manipulação de dados para a Essay-BR estendida, cujo código-fonte pode ser acessado pelo GitHub\footnote{\url{https://github.com/lplnufpi/essay-br}}. Entretanto, devido a pequenas diferenças na formatação e leitura dos dados, utilizamos, neste trabalho, um \textit{fork}\footnote{\url{https://github.com/josemayer/essay-br}} adaptado da dependência.
+
+A biblioteca atualizada tem o principal intuito de transformar o \textit{dataframe} estendido no mesmo formato do básico, contraindo as competências a uma única coluna. O principal objetivo é manter uma consistência na \textit{pipeline} de preparação dos dados, abordada na seção \ref{sec:preprocessing}. Escolhemos a mesma convenção do Essay-BR básico devido a sua utilização mais frequente para experimentos iniciais do projeto.
 
 % \subsection{Essay-BR Customizada}
 % add-custom-info: falar sobre a base de dados extraídas também do UOL, mas adequadamente limpada para evitar os problemas da essay-br. falar sobre as professoras utilizadas para avaliar a consistência.
 
 \section{Pré-processamento}
+\label{sec:preprocessing}
+
+Antes de iniciar o treinamento dos modelos, é crucial realizar o pré-processamento dos dados brutos para usá-los de maneira adequada. Essa etapa envolve transformações em sua formatação e estrutura, visando facilitar a extração eficiente de padrões. No contexto deste trabalho, diversos tratamentos foram implementados, com foco principal na remodelação das redações e das avaliações para a otimização do processo de aprendizado.
+
+Como passo inicial, realizamos a junção dos textos em uma única sequência, adotando uma formatação adequada para a entrada do modelo. Para isso, concatenamos todos os elementos da lista de parágrafos da redação, separando-os por caracteres marcadores de nova linha. A Figura \ref{fig:preprocessing-1} ilustra um exemplo de redação antes e depois do processo, destacando a simplificação da estrutura textual.
+
+\begin{figure}[H]
+    \caption{Exemplo de redação antes e depois da concatenação dos parágrafos.}
+    \label{fig:preprocessing-1}
+    \centering
+    \resizebox{0.9\textwidth}{!}{\input{../figuras/preprocessing-essay}}
+\end{figure}
+
+Em seguida, normalizamos as notas atribuídas às competências, de modo que elas estejam no intervalo de 0 a 5. Para isso, dividimos cada pontuação por 40, diferença máxima de duas categorias de avaliação. Assim, cada aluno pode ter uma nota final inteira de 0 a 25, considerando a soma dos valores padronizados. É importante ressaltar que não normalizamos o campo \texttt{score}, dado que ele não é utilizado no treinamento.
+
+Por fim, separamos as notas das competências em 5 colunas distintas, de \texttt{compI}, a \texttt{compV}, de modo que cada uma corresponda a uma pontuação. O objetivo principal é facilitar a construção dos cinco sistemas avaliadores isolados, extraindo apenas as colunas do texto e da nota da competência correspondente a cada treinamento.
+
+\section{Modelagem}
+
+A concretização deste trabalho envolveu a aplicação de técnicas avançadas de aprendizado profundo e NLP, abordagem crucial para a construção de sistemas avaliadores capazes de capturar nuances complexas da língua portuguesa. Além disso, a execução do projeto foi pautada em escolhas de ferramentas adequadas para o desenvolvimento das redes especialistas, levando em consideração o repertório de recursos voltados ao aprendizado de máquina.
+
+Os sistemas de avaliação foram desenvolvidos por meio do processo de \textit{fine-tuning} do BERT, utilizando a biblioteca de \textit{transformers} do HuggingFace\footnote{\url{https://huggingface.co}}, uma plataforma aberta de \textit{machine learning} e ciência de dados que oferece uma variedade de repositórios contendo, especialmente, modelos de linguagem abertos. A biblioteca disponibiliza uma interface de rápido acesso a arquiteturas pré-treinadas, como o BERTimbau.
+
+Além disso, para desenvolver a estrutura do modelo especialista, utilizamos o Keras\footnote{\url{https://keras.io/}}, que fornece uma abordagem de alto nível para projetar redes neurais. A biblioteca permite a especificação de diversos hiperparâmetros relevantes para o processo de treinamento, como a função de otimização e o tamanho dos lotes utilizados no processo, por exemplo.
+
+Dentre as técnicas para a atribuição de nota, escolhemos a regressão, que é um método de aprendizado que mapeia uma entrada para um valor numérico contínuo. A decisão foi guiada pelo fato de que a distribuição das notas das competências é relativamente normal e unimodal, como mostrado na análise exploratória realizada anteriormente.
+
+Por fim, escolhemos o erro médio quadrático (MSE) como métrica de desempenho prinicipal, utilizando-a para avaliar e orientar o treinamento dos modelos. Algumas outras técnicas de verificação de concordância, como a taxa de correspondência exata e a visualização das matrizes de confusão, também foram utilizadas para um julgamento empírico da eficácia dos sistemas avaliadores na prática.
+
+\subsection{Arquitetura}
+
+A arquitetura do modelo foi projetada concentrando-se em duas etapas fundamentais: a de codificação dos textos e a de avaliação propriamente dita. Inicialmente, estruturamos uma camada de entrada baseada no BERTimbau, cuja função primordial é receber os textos de redações e, por meio de sua capacidade de processamento contextual, gerar \textit{embeddings} que capturam informações semânticas e sintáticas. Essa camada representa uma fase crucial da estrutura, permitindo ao modelo uma compreensão rica e contextualizada dos textos submetidos.
+
+Posteriormente, projetamos uma camada de atribuição de notas, usando uma configuração de redes neurais com a saída associada a uma função de regressão linear. Essa camada é responsável por transformar as representações obtidas na etapa anterior em notas numéricas, refletindo a pontuação atribuída em relação à competência em foco.
+
+É essencial notar que, independentemente da competência, a arquitetura do sistema é generalizável o suficiente para aprender a atribuir as notas. Dessa forma, definimos a estrutura dos cinco modelos avaliadores como a mesma, com diferença apenas na variável de interesse no processo de treinamento. A Figura \ref{fig:full_architecture} abaixo permite a visualização da arquitetura de maneira esquemática, evidenciando as duas camadas de alto nível e a conexão entre elas.
+
+\begin{figure}[H]
+    \caption{Arquitetura geral de um sistema avaliador.}
+    \label{fig:full_architecture}
+    \centering
+    \resizebox{\textwidth}{!}{\input{../figuras/full_architecture}}
+\end{figure}
+
+Quanto à configuração da rede neural especialista, optamos por uma estrutura composta por três camadas ocultas, com dimensões definidas como 3000, 2000 e 2500 neurônios, respectivamente. A escolha dos tamanhos foi orientada pela necessidade de criar uma arquitetura suficientemente complexa para capturar as relações presentes nos textos das redações. Entretanto, uma quantidade grande de parâmetros pode ocasionar em problemas de sobreajustes do modelo.
+
+Introduzimos, para mitigar esse risco, a função de regularização de \textit{dropout} entre todas as camadas da rede neural especialista, com fator de $10\%$. Essa técnica tem o intuito de agir aleatoriamente, ignorando uma quantidade de pesos proporcional ao fator nas transições da etapa de treinamento. Dessa forma, ela garante uma maior generalização do modelo, contribuindo para melhor desempenho em dados não vistos.
+
+Quanto aos cálculos realizados em cada camada, escolhemos duas funções de ativação com caráter não linear para a efetiva extração de características das redações. A primeira delas, SeLU, é eficaz em lidar com problemas de gradiente desvanecente e em proporcionar uma convergência mais estável durante o treinamento. A outra, sigmoide (\ref{eq:sigmoid}), é uma escolha comum para modelagem de problemas de classificação binária e pode ser efetiva em lidar com esse tipo de características dos textos. Por fim, para a camada de saída, utilizamos a função linear com o intuito de obter o resultado da regressão final. A SeLU é representada pela equação \ref{eq:selu}, em que $\alpha = 1,67326324$ e $\lambda = 1,05070098$.
+
+\begin{equation}
+    \label{eq:selu}
+    \text{f}(x) = \lambda
+    \begin{cases}
+        x, & \text{se } x > 0 \\
+        \alpha (e^{x} - 1), & \text{se } x \leq 0
+    \end{cases}
+\end{equation}
+
+\subsection{Implementação}
+\label{subsec:implementation}
+
+A implementação da arquitetura é feita a partir do Keras, com uma classe de hipermodelos. Essa classe é útil, em especial, para a otimização de parâmetros que devem ser escolhidos de forma antecipada pelos projetistas, como a dimensão das camadas ocultas, por exemplo. Nela, adicionamos um atributo especial para armazenar o modelo do BERTimbau e redefinimos os métodos de construção da rede e de treino. O trecho de código em Python \ref{alg:hypermodel} mostra, na prática, a implementação.
+
+\begin{program}
+    \index{EssayHyperModel}
+    \centering
+    \caption{Implementação em Python da classe \texttt{EssayHyperModel}}
+    \label{alg:hypermodel}
+\begin{lstlisting}[language=Python]
+import tensorflow as tf
+import keras_tuner as kt
+from tf.keras.optimizers import Adam
+from tf.keras.layers import Dense, Dropout, Input
+from tf.keras.models import Model
+
+class EssayHyperModel(kt.HyperModel):
+    def __init__(self, bert):
+      self.bert = bert
+
+    def build(self, hp):
+        input_ids = Input(shape=(None,), dtype=tf.int32, name="input_ids")
+        embedding = self.bert({'input_ids': input_ids})['pooler_output']
+
+        x = Dense(3000, activation=hp.Choice('a_l1', values=['selu', 'sigmoid']))(embedding)
+        x = Dropout(0.1)(x)
+        x = Dense(2000, activation=hp.Choice('a_l2', values=['selu', 'sigmoid']))(x)
+        x = Dropout(0.1)(x)
+        x = Dense(2500, activation=hp.Choice('a_l3', values=['selu', 'sigmoid']))(x)
+        x = Dropout(0.1)(x)
+
+        output = Dense(1, activation='linear')(x)
+
+        model = Model(inputs=input_ids, outputs=output)
+
+        optimizer = Adam(learning_rate=hp.Choice('lr', values=[2e-3, 2e-5]))
+        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
+
+        return model
+
+    def fit(self, hp, model, *args, **kwargs):
+        return model.fit(
+            *args,
+            batch_size=hp.Choice("bs", [2, 3, 4]),
+            **kwargs,
+        )
+\end{lstlisting}
+\end{program}
+
+A primeira camada da rede consiste em uma entrada que recebe sequências de identificadores de \textit{tokens} dos textos, provenientes do processo de tokenização. Essa camada permite o processamento de sequências com comprimentos variáveis, sendo útil para lidar com redações de diferentes tamanhos. Os \textit{tokens} de entrada são então processados pelo BERTimbau, gerando \textit{embeddings} correspondentes à saída do \textit{pooler} do modelo.
+
+Em seguida, na estruturação da rede especialista, define-se uma arquitetura de três camadas densas, cada uma seguida por uma etapa de \textit{dropout} para regularização. A escolha da função de ativação de cada nível é realizada de forma dinâmica, permitindo a personalização durante o processo de treinamento do modelo. Nas linhas 15, 17 e 19 são também definidas as dimensões das camadas densas: 3000, 2000 e 2500, respectivamente. A camada de saída, definida na linha 22, possui uma única unidade, utilizando ativação linear.
+
+O otimizador escolhido para treinamento é o Adam, conforme a linha 26, e sua taxa de aprendizado é determinada como um dos parâmetros do espaço de busca hiperparamétrica. A função de perda adotada, explicitada na linha 27, é o erro quadrático médio (MSE), com o intuito de penalizar desvios significativos entre as predições do modelo e os valores de validação. O cálculo dessa métrica é dado pela equação \ref{eq:mse}, em que $y_{i}$ são os valores esperados e $\hat{y}_{i}$ são os valores obtidos pelo sistema avaliador, para $i \in \{1, \cdots, n\}$.
+
+\begin{equation}
+    \label{eq:mse}
+    \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+\end{equation}
+
+O processo de treinamento do modelo é configurado para ajustar-se aos parâmetros definidos dinamicamente pelo otimizador, técnica chamada de \textit{hypertuning}. O tamanho do lote, conforme a linha 34, também é tratado como um hiperparâmetro. Na seção \ref{subsec:hyperparameter-tuning}, explicaremos o processo de \textit{hypertuning} sobre um espaço de possibilidades limitado.
+
+\subsection{Otimização de Hiperparâmetros}
+\label{subsec:hyperparameter-tuning}
+
+% falar sobre a biblioteca do keras para tuning (HyperModel, Tuner, etc.)
+
+% explicar o hypertuning e qual foram os parametros escolhidos p tunar, qual range, qual a forma de busca (GridSearch), etc.
+
+A otimização de hiperparâmetros é uma técnica utilizada para encontrar a melhor configuração de parâmetros pré-definidos de um modelo de aprendizado de máquina. Essa abordagem é essencial para a obtenção de resultados satisfatórios, já que alguns fatores definidos a nível de arquitetura são muito influentes no processo de treinamento.
+
+Para realizar a otimização, utilizamos a biblioteca Keras Tuner, que fornece uma interface de alto nível para o processo de \textit{tuning}. Com ela, podemos definir um espaço de busca, que contém os parâmetros a serem otimizados, e um algoritmo de exploração, que define a estratégia de pesquisa nesse espaço. No caso do sistema especialista, optamos por realizar uma varredura completa nas possibilidades de hiperparâmetros, utilizando o algoritmo de busca em grade que analisa todas as combinações possíveis de variáveis.
+
+O espaço de busca é definido ainda na criação da arquitetura dos hipermodelos, utilizando um método de escolha para definir as possibilidades desejadas. Na etapa de treino, cada iteração de configuração distinta é definida como uma \textit{trial}, em que a rede neural é otimizada normalmente em um dado número de épocas e, depois, avaliada em um conjunto de validação. Essa avaliação é a responsável por indicar se os hiperparâmetros da \textit{trial} melhoraram ou pioraram o resultado obtido. Ao fim de todo o processo, a melhor configuração é recuperada para a construção de uma nova rede.
+
+No caso do sistema avaliador, os hiperparâmetros escolhidos foram a taxa de aprendizado (\texttt{lr}), o tamanho do lote (\texttt{bs}) e as funções de ativação das camadas ocultas (\texttt{a\_l1}, \texttt{a\_l2} e \texttt{a\_l3}). A taxa de aprendizado é o fator que determina o tamanho do passo dado pelo otimizador de treino em cada iteração, enquanto que o tamanho do lote é a quantidade de instâncias utilizadas para o ajuste dos pesos do modelo a cada época. A tabela \ref{tab:hyperparameters-to-tune} lista cada um dos hiperparâmetros da classe \texttt{EssayHyperModel} (\autoref{alg:hypermodel}) e suas possibilidades de escolha.
+
+\begin{table}[H]
+    \centering
+    \caption{Hiperparâmetros da classe \texttt{EssayHyperModel} escolhidos para otimização, com seus respectivos espaços de escolha.}
+    \label{tab:hyperparameters-to-tune}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Hiperparâmetro} & \textbf{Valores} \\
+        \midrule
+        Taxa de aprendizado (\texttt{lr}) & $2 \times 10^{-3}$ e $2 \times 10^{-5}$ \\
+        Tamanho do lote (\texttt{bs}) & 2, 3 e 4 \\
+        Função de ativação da camada 1 (\texttt{a\_l1}) & SeLU e Sigmoide \\
+        Função de ativação da camada 2 (\texttt{a\_l2}) & SeLU e Sigmoide \\
+        Função de ativação da camada 3 (\texttt{a\_l3}) & SeLU e Sigmoide \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 
+\subsection{Avaliação}
 
-%\section{Modelagem}
+No contexto do aprendizado de máquina, a avaliação de modelos é uma etapa crucial para a verificação de sua eficácia. Neste trabalho, utilizamos uma abordagem de validação cruzada, que consiste em dividir a base de dados em conjuntos de treino e teste, de modo que o modelo seja treinado em uma parcela dos dados e avaliado em outra independente. Essa técnica é fundamental para a verificação da capacidade de generalização dos sistemas avaliadores, já que permite a análise de seu desempenho em dados não vistos.
 
-%\subsection{Arquitetura}
+A divisão das entradas foi realizada a partir da biblioteca de manipulação disponibilizada pelos autores da Essay-BR (\cite{marinho-et-al-21}; \cite{marinho-et-al-22}), de modo que o conjunto de teste representa 15\% das instâncias totais, totalmente isoladas daquelas usadas no processo de treino. Além disso, como a saída da rede especialista retorna um valor contínuo, realizamos o tratamento das notas inferidas com uma função de arredondamento para um número inteiro mais próximo, a fim de adequá-lo ao formato da parcela de testes.
 
-%\subsection{Implementação}
+A avaliação dos modelos foi realizada com base nas métricas de MSE (\autoref{eq:mse}), proporção de correspondência exata, divergência e \textit{quadratic weighted kappa} (QWK). A seguir, detalharemos cada uma delas.
 
-% falar sobre quais são os hiperparâmetros aqui e ganchar pra seção sequente
+\subsubsection{Erro Quadrático Médio (MSE)}
 
-%\subsection{Otimização de Hiperparâmetros}
+O erro quadrático médio (MSE) é uma métrica de desempenho comumente utilizada para avaliar modelos de regressão. Ela é definida como a média dos erros quadráticos entre as predições e os valores esperados, conforme a equação \ref{eq:mse}.
 
-%\subsection{Avaliação}
+\subsubsection{Proporção de Correspondência Exata}
 
-%\section{Treinamento}
+A proporção de correspondência exata é uma métrica de desempenho utilizada para avaliar modelos de classificação com múltiplas categorias. Ela é definida como a taxa de predições corretas em relação ao total de predições. Considerando $\hat{y}_{i}$ como o $i$-ésimo valor inferido e $y_{i}$ como o $i$-ésimo valor real, definimos a proporção de correspondência exata pela equação \ref{eq:exact_match_ratio}, em que $I(\hat{y}_{i} = y_{i})$ vale 1 caso os dois valores sejam iguais e 0 em caso contrário.
 
-%\subsection{Ambiente}
+\begin{equation}
+    \label{eq:exact_match_ratio}
+    \text{MR} = \frac{1}{n} \sum_{i=0}^{n} I(\hat{y}_{i} = y_{i})
+\end{equation}
 
-%\subsection{Configurações}
+\subsubsection{Divergência}
+
+A métrica de divergência avalia a consistência interna da nota de uma competência, inspirada no processo de correção das redações do ENEM. Ela é calculada como a proporção de avaliações que diferiram em mais de 2 pontos para a saída do sistema avaliador. Essa convenção é feita com base na definição de \citet{cartilha-redacao}, que classifica como divergente duas correções cujas notas de competência difiram em mais de 100 pontos (2 pontos, na abordagem normalizada). Considerando a função $I$:
+
+\begin{equation}
+    I(\hat{y}_{i} \lessgtr y_{i}) = \begin{cases}
+        1, & \text{se } |\hat{y}_{i} - y_{i}| > 2 \\
+        0, & \text{caso contrário}
+    \end{cases}
+\end{equation}
+
+em que $\hat{y_{i}}$ é o $i$-ésimo valor inferido e $y_{i}$ é o $i$-ésimo valor real, a divergência pode ser calculada pela equação \ref{eq:divergence}.
+
+\begin{equation}
+    \label{eq:divergence}
+    \text{D} = \frac{1}{n} \sum_{i=0}^{n} I(\hat{y}_{i} \lessgtr y_{i})
+\end{equation}
+
+\subsubsection{\textit{Quadratic Weighted Kappa} (QWK)}
+
+O \textit{quadratic weighted kappa} (QWK) é uma métrica de desempenho usada para avaliar modelos de classificação multicategóricos, introduzida por \citet{cohen-1968-qwk}. Essa métrica é definida através da comparação entre a concordância observada $O$ entre as classificações e a concordância esperada ao acaso $E$, levando em consideração os pesos $w_{ij}$ que refletem a importância das discordâncias entre diferentes categorias.
+
+A fórmula do QWK é expressa pela equação \ref{eq:qwk}, em que $O_{ij}$ é o número normalizado de pares de instâncias classificadas como $i$ por um avaliador e $j$ por outro, $E_{ij}$ é o número normalizado esperado de pares de instâncias que seriam classificadas como $i$ por um avaliador e como $j$ por outro, assumindo que não houvesse correspondência entre as avaliações, e $w_{ij}$ são os pesos atribuídos aos pares de classes $i$ e $j$, considerando a discordância quadrática relativa entre as categorias.
+
+\begin{equation}
+    \label{eq:qwk}
+    QWK = 1 - \frac{\sum_{i,j}w_{ij}O_{ij}}{\sum_{i,j}w_{ij}E_{ij}}
+\end{equation}
+
+Na implementação do algoritmo de cálculo do QWK, utiliza-se matrizes $O$ e $E$, de dimensões $i \times j$, para armazenar as informações de $O_{ij}$ e $E_{ij}$. A matriz $O$ é calculada a partir da matriz de confusão, enquanto que a matriz $E$ é calculada pela distribuição marginal dos valores inferidos em relação aos valores reais.
+
+Essa métrica varia no intervalo de -1 a 1, onde 1 indica concordância perfeita, 0 indica concordância ao acaso e valores negativos indicam discordância pior do que a esperada aleatoriamente. O QWK é particularmente útil em problemas onde as categorias são uma sequência, como no caso das notas das competências, considerando não apenas a correspondência direta entre as previsões e os rótulos reais, mas também a conformidade em termos de ordem.
+
+De modo geral, podemos definir intervalos de interpretação para o QWK, conforme a tabela \ref{tab:qwk-interpretation}.
+
+\begin{table}[H]
+    \centering
+    \caption{Intervalos de interpretação para valores do \textit{quadratic weighted kappa} (QWK). Tabela extraída de \url{https://www.kaggle.com/code/prashant111/simple-explanation-of-quadratic-weighted-kappa}.}
+    \label{tab:qwk-interpretation}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{QWK} & \textbf{Interpretação} \\
+        \midrule
+        $-1$ & Discordância completa \\
+        $0$ & Concordância ao acaso \\
+        $0 - 0,2$ & Concordância precária \\
+        $0,2 - 0,4$ & Concordância moderada \\
+        $0,4 - 0,6$ & Concordância boa \\
+        $0,6 - 0,8$ & Concordância muito boa \\
+        $0,8 - 1$ & Concordância quase perfeita \\
+        $1$ & Concordância perfeita \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Treinamento}
+
+O treinamento é a etapa principal de ajuste da arquitetura, em que os sistemas aprendem os padrões de avaliação a partir da base de redações anotada. A biblioteca TensorFlow\footnote{\url{https://www.tensorflow.org}} foi a escolha principal para esse estágio, dado seu suporte eficiente para operações de álgebra linear e sua facilidade de utilização. Detalharemos, a seguir, o processo de otimização dos sistemas avaliadores, definindo melhor as configurações utilizadas e o ambiente de execução.
+
+\subsection{Configurações}
+
+No processo de treinamento, foi utilizado um conjunto de dados complementar à divisão de testes da Essay-BR, com 85\% do total de instâncias. Desse valor, 70\% da base original foi alocada para a fase de otimização do modelo, enquanto que os 15\% restantes foram reservados para a validação e ajuste da estrutura. No caso das redes especialistas, tal ajuste ocorreu por meio do uso do MSE como função de perda.
+
+Alguns dos parâmetros de treinamento foram escolhidos de maneira automática, com o intuito de otimizar o desempenho geral dos avaliadores, como o tamanho do lote (\textit{batch size}) e a taxa de aprendizado. Além disso, o Adam (\textit{Adaptative Moment Estimation}), proposto por \citet{kingma2017adam}, foi definido como otimizador da rede neural, devido à sua eficácia em combinar as vantagens do método de gradiente estocástico (SGD) com a adaptação da taxa de aprendizado ao longo do treino.
+
+Durante a busca dos hiperparâmetros, foram utilizados dois \textit{callbacks} personalizados para monitoramento e limpeza. O primeiro, \texttt{LogCallback}, tem o intuito de registrar as avaliações de cada \textit{trial} e o segundo, \texttt{DeleteCallback}, visa remover salvamentos parciais de redes que possam sobrecarregar o disco. Cada iteração treina um modelo distinto por 5 épocas, atualizando o conjunto ótimo de hiperparâmetros ao longo do processo.
+
+Ao fim da busca, os melhores valores são usados para a construção de um novo modelo, que é treinado em 50 épocas. Nessa etapa, utilizamos somente o \textit{callback} \texttt{ModelCheckpoint} do Keras, a fim de salvar a rede com a melhor validação dentre todo o processo de otimização. Isso é feito para prevenir a ocorrência de sobreajustes, já que um número de épocas muito alto pode levar a tal risco. O trecho de código \ref{alg:search-and-train} abaixo demonstra a implementação das configurações abordadas, suprimindo algumas informações com ``\texttt{...}'' para fins de concisão.
+
+\begin{program}
+    \index{TrainHypertuning}
+    \centering
+    \caption{Algoritmo do treinamento e busca de hiperparâmetros}
+    \label{alg:search-and-train}
+\begin{lstlisting}[language=Python]
+hypermodel = EssayHyperModel(bert)
+
+tuner = kt.GridSearch(hypermodel, objective='val_loss', executions_per_trial=1, ...)
+tuner.search(..., epochs=5, callbacks=[LogCallback(...), DeleteCallback()])
+
+best_model_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+best_model = tuner.hypermodel.build(best_model_hps)
+
+history = best_model.fit(
+    ...,
+    epochs=50,
+    batch_size=best_model_hps.get('batch_size'),
+    callbacks=[ModelCheckpoint(filepath=(...), monitor='val_loss', save_best_only=True)]
+)
+\end{lstlisting}
+\end{program}
+
+\subsection{Ambiente}
+
+O treinamento dos modelos foi realizado em quatro ambientes controlados, todos com \textit{hardwares} adequados para lidar com a tarefa de processamento massivo. O primeiro deles, o Google Colab\footnote{\url{https://colab.research.google.com/}}, foi utilizado no início do projeto para a realização de experimentos iniciais e para a construção de redes mais simples em \textit{notebooks}, documentos interativos que permitem execução de código. Já o segundo, a Rede GNU/Linux do IME-USP\footnote{\url{https://www.linux.ime.usp.br}}, participou das etapas primitivas de \textit{hypertuning} das redes especialistas e foi crucial para a transição do projeto para uma versão puramente em Python.
+
+Na versão mais madura do trabalho, utilizamos unidades com maior poder computacional para a realização dos treinamentos e otimização de hiperparâmetros definivos. Uma delas, chamada PGM, é uma máquina física da seção de pesquisas do Departamento de Ciência da Computação (DCC) do IME-USP. A outra é uma máquina virtual hospedada no serviço Google Cloud\footnote{\url{https://cloud.google.com/}}.
+
+Os quatro ambientes dispunham de GPUs que aceleraram o processo de treinamento, reduzindo o tempo de execução das iterações de \textit{hypertuning}. Abaixo, são listadas as especificações de cada máquina usada.
+
+\begin{itemize}
+    \item \textbf{Google Colab}: GPU Tesla T4, 16GB de GPU RAM.
+    \item \textbf{Rede GNU/Linux}: GPU NVIDIA GeForce RTX 3060, 6GB de GPU RAM.
+    \item \textbf{PGM}: GPU NVIDIA GeForce GTX 1080 Ti, 12GB de GPU RAM.
+    \item \textbf{Google Cloud}: GPU NVIDIA Tesla P100, 16GB de GPU RAM.
+\end{itemize}
