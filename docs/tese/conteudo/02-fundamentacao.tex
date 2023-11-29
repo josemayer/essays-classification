@@ -527,6 +527,7 @@ A fim de se adequar à diversidade linguística, foram desenvolvidas algumas var
 O BERT representa não apenas um avanço técnico, mas também uma ferramenta essencial para diversas aplicações em NLP, incluindo a tarefa de AES. A seguir, abordaremos brevemente os aspectos de sua arquitetura, o processo de treinamento e refinamento, a variação do modelo para a língua portuguesa e, por fim, como o BERT pode ser usado para atribuir notas às redações do ENEM de forma automática.
 
 \subsection{Arquitetura}
+\label{subsec:bert_architecture}
 
 A arquitetura do BERT é meticulosamente projetada para capturar de forma eficaz as relações contextuais em uma sequência de palavras, incorporando transformadores bidirecionais em múltiplas camadas. Cada camada desempenha um papel crucial na codificação contextual, permitindo que o modelo compreenda as dependências tanto à esquerda quanto à direita de cada unidade. A Figura \ref{fig:bert_architecture} esquematiza a arquitetura geral do BERT.
 
@@ -546,8 +547,6 @@ O BERT mantém, além disso, vetores que codificam a posição e o segmento de c
 As camadas de transformadores, então, recebem como entrada os vetores de \textit{tokens}, posição e segmento, codificando relações contextuais entre as palavras. Cada camada, por meio das conexões bidirecionais entre todos os \textit{transformers} anteriores, gera uma representação dos vocábulos de entrada. Isso possibilita ao BERT capturar interações complexas entre os elementos, fornecendo uma compreensão aprimorada de uma sequência. As saídas de todas as camadas são combinadas para formar uma representação final enriquecida.
 
 Os autores \citet{bert2018} propõem duas arquiteturas do BERT: uma basilar ($\text{\textbf{BERT}}_{\text{\textbf{BASE}}}$) de 12 camadas de transformadores empilhadas, com 12 cabeças de atenção em cada uma, e outra estendida ($\text{\textbf{BERT}}_{\text{\textbf{LARGE}}}$) de 24 camadas de transformadores, com 16 cabeças de atenção em cada uma.
-
-% continuar daqui SEM se matar
 
 \subsection{Pré-treinamento e \textit{Fine-tuning}}
 
