@@ -337,7 +337,7 @@ history = best_model.fit(
 
 \subsection{Ambiente}
 
-O treinamento dos modelos foi realizado em quatro ambientes controlados, todos com \textit{hardwares} adequados para lidar com a tarefa de processamento massivo. O primeiro deles, o Google Colab\footnote{\url{https://colab.research.google.com/}}, foi utilizado no início do projeto para a realização de experimentos iniciais e para a construção de redes mais simples em \textit{notebooks}, documentos interativos que permitem execução de código. Já o segundo, a Rede GNU/Linux do IME-USP\footnote{\url{https://www.linux.ime.usp.br}}, participou das etapas primitivas de \textit{hypertuning} das redes especialistas e foi crucial para a transição do projeto para uma versão puramente em Python.
+O treinamento dos modelos foi realizado em quatro ambientes controlados, todos com \textit{hardwares} adequados para lidar com a tarefa de processamento massivo. O primeiro deles, o Google Colab\footnote{\url{https://colab.research.google.com/}}, foi utilizado no início do projeto para a realização de experimentos iniciais e para a construção de redes mais simples em \textit{notebooks}, documentos interativos que permitem execução de código. Já o segundo, a Rede GNU/Linux do IME-USP\footnote{\url{https://www.linux.ime.usp.br/}}, participou das etapas primitivas de \textit{hypertuning} das redes especialistas e foi crucial para a transição do projeto para uma versão puramente em Python.
 
 Na versão mais madura do trabalho, utilizamos unidades com maior poder computacional para a realização dos treinamentos e otimização de hiperparâmetros definivos. Uma delas, chamada PGM, é uma máquina física da seção de pesquisas do Departamento de Ciência da Computação (DCC) do IME-USP. A outra é uma máquina virtual hospedada no serviço Google Cloud\footnote{\url{https://cloud.google.com/}}.
 
@@ -345,7 +345,7 @@ Os quatro ambientes dispunham de GPUs que aceleraram o processo de treinamento, 
 
 \begin{itemize}
     \item \textbf{Google Colab}: GPU Tesla T4, 16GB de GPU RAM.
-    \item \textbf{Rede GNU/Linux}: GPU NVIDIA GeForce RTX 3060, 6GB de GPU RAM.
+    \item \textbf{Rede GNU/Linux}: GPU NVIDIA GeForce RTX 3060, 12GB de GPU RAM.
     \item \textbf{PGM}: GPU NVIDIA GeForce GTX 1080 Ti, 12GB de GPU RAM.
     \item \textbf{Google Cloud}: GPU NVIDIA Tesla P100, 16GB de GPU RAM.
 \end{itemize}
