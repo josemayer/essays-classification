@@ -303,6 +303,7 @@ De modo geral, podemos definir intervalos de interpretação para o QWK, conform
 O treinamento é a etapa principal de ajuste da arquitetura, em que os sistemas aprendem os padrões de avaliação a partir da base de redações anotada. A biblioteca TensorFlow\footnote{\url{https://www.tensorflow.org}} foi a escolha principal para esse estágio, dado seu suporte eficiente para operações de álgebra linear e sua facilidade de utilização. Detalharemos, a seguir, o processo de otimização dos sistemas avaliadores, definindo melhor as configurações utilizadas e o ambiente de execução.
 
 \subsection{Configurações}
+\label{subsec:training-configurations}
 
 No processo de treinamento, foi utilizado um conjunto de dados complementar à divisão de testes da Essay-BR, com 85\% do total de instâncias. Desse valor, 70\% da base original foi alocada para a fase de otimização do modelo, enquanto que os 15\% restantes foram reservados para a validação e ajuste da estrutura. No caso das redes especialistas, tal ajuste ocorreu por meio do uso do MSE como função de perda.
 
