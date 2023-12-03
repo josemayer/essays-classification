@@ -1,0 +1,226 @@
+\chapter{Experimentos}
+
+Com base na metodologia detalhada no capítulo anterior, uma série de experimentos foi conduzida com o propósito de avaliar o desempenho dos sistemas de correção automática desenvolvidos. Durante essa etapa, exploramos diversas configurações treinando modelos não só com a versão estendida, mas também com a versão básica da Essay-BR --- dada a variação dos conjuntos de dados.
+
+Além disso, para garantir uma comparação adequada, foram incluídos experimentos de controle que utilizam hiperparâmetros fixados e conhecidos para o treinamento dos modelos, provenientes de explorações iniciais do projeto. Essa abordagem permite metrificar o impacto do \textit{hypertuning} no desenvolvimento de redes especialistas de avaliação.
+
+Por fim, visando explorar a capacidade de aprendizado dos modelos, foram utilizados gráficos que denotam a evolução de cada treinamento realizado. Isso proporciona uma compreensão mais abrangente da influência de escolhas estruturais no processo de otimização, além de indicar caminhos possíveis para contornar o subdesempenho dos sistemas de correção automática.
+
+\section{Treinamento}
+
+Nos experimentos de treinamento, optamos por manter o registro do histórico de desempenho apenas do conjunto de dados estendido, para fins de concisão. No entanto, ressaltamos que a versão básica da Essay-BR também foi utilizada para a criação de outras de redes, cujos resultados são usados para comparações gerais na seção \ref{sec:evaluate}.
+
+A versão do BERTimbau escolhida como base para a implementação das redes especialistas foi a \texttt{bert-base-portuguese-cased} do HuggingFace, que possui o mesmo número de parâmetros do $\text{BERT}_{\textbf{\text{BASE}}}$, abordado na seção \ref{subsec:bert_architecture}, e é sensitiva a letras maíusculas e minúsculas nos textos de entrada.
+
+Em geral, foram realizados experimentos que levaram em conta hiperparâmetros otimizados e fixos. A seguir, detalharemos os resultados obtidos no processo de \textit{hypertuning}, seguido da análise comparativa da função de perda para ambos os casos de treino.
+
+\subsection{Otimização de Hiperparâmetros}
+
+Na otimização dos hiperparâmetros, todas as combinações possíveis de valores foram testadas, em um total de 48 \textit{trials} ($2 \cdot 2 \cdot 2 \cdot 2 \cdot 3$). A melhor configuração das redes é representada pelo conjunto de variáveis que fazem a função de perda ter o menor valor possível entre as iterações.
+
+Nas seções \ref{subsec:exp-hyp-c1}, \ref{subsec:exp-hyp-c2}, \ref{subsec:exp-hyp-c3}, \ref{subsec:exp-hyp-c4} e \ref{subsec:exp-hyp-c5} exploraremos melhor o processo de otimização para os sistemas avaliadores de cada competência.
+
+\subsubsection{Competência I}
+\label{subsec:exp-hyp-c1}
+
+\begin{figure}[H]
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/graficos/hypertuning_compI.pgf}}
+    \caption{Evolução da função de perda no \textit{hypertuning} do modelo da competência I.}
+    \label{fig:exp-hyp-c1}
+\end{figure}
+
+A figura \ref{fig:exp-hyp-c1} mostra a evolução da função de perda ao longo das iterações da busca em grade para o modelo da competência I. A melhor configuração de hiperparâmetros obtida correspondeu a uma taxa de aprendizado de $2 \cdot 10^{-3}$, a um tamanho de lote de 4 e a funções de ativação de SeLU, Sigmoide e Sigmoide, respectivamente, nas três camadas ocultas. A perda de validação para esse conjunto foi de aproximadamente 0,692203.
+
+
+\subsubsection{Competência II}
+\label{subsec:exp-hyp-c2}
+
+\begin{figure}[H]
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/graficos/hypertuning_compII.pgf}}
+    \caption{Evolução da função de perda no \textit{hypertuning} do modelo da competência II.}
+    \label{fig:exp-hyp-c2}
+\end{figure}
+
+A figura \ref{fig:exp-hyp-c2} evidencia a evolução da função de perda para a competência II. A melhor configuração de hiperparâmetros obtida correspondeu a uma taxa de aprendizado de $2 \cdot 10^{-3}$, a um tamanho de lote de $3$ e a funções de ativação de SeLU, SeLU e Sigmoide, respectivamente. A melhor perda de validação obtida foi de aproximadamente 1,024713.
+
+\subsubsection{Competência III}
+\label{subsec:exp-hyp-c3}
+
+\begin{figure}[H]
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/graficos/hypertuning_compIII.pgf}}
+    \caption{Evolução da função de perda no \textit{hypertuning} do modelo da competência III.}
+    \label{fig:exp-hyp-c3}
+\end{figure}
+
+A figura \ref{fig:exp-hyp-c3} demonstra a evolução da função de perda para a competência III. A melhor configuração de hiperparâmetros obtida correspondeu a uma taxa de aprendizado de $2 \cdot 10^{-5}$, a um tamanho de lote de $4$ e a funções de ativação de Sigmoide, Sigmoide e Sigmoide, respectivamente. A melhor perda de validação registrada foi de aproximadamente 0,940287.
+
+\subsubsection{Competência IV}
+\label{subsec:exp-hyp-c4}
+
+\begin{figure}[H]
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/graficos/hypertuning_compIV.pgf}}
+    \caption{Evolução da função de perda no \textit{hypertuning} do modelo da competência IV.}
+    \label{fig:exp-hyp-c4}
+\end{figure}
+
+A figura \ref{fig:exp-hyp-c4} ilustra a evolução da função de perda para a competência IV. A melhor configuração de hiperparâmetros obtida correspondeu a uma taxa de aprendizado de $2 \cdot 10^{-3}$, a um tamanho de lote de $2$ e a funções de ativação de SeLU, Sigmoide e Sigmoide, respectivamente. A melhor perda de validação obtida foi de aproximadamente 1,283995.
+
+\subsubsection{Competência V}
+\label{subsec:exp-hyp-c5}
+
+\begin{figure}[H]
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/graficos/hypertuning_compV.pgf}}
+    \caption{Evolução da função de perda no \textit{hypertuning} do modelo da competência V.}
+    \label{fig:exp-hyp-c5}
+\end{figure}
+
+A figura \ref{fig:exp-hyp-c5} mostra a evolução da função de perda para a competência V. A melhor configuração de hiperparâmetros obtida correspondeu a uma taxa de aprendizado de $2 \cdot 10^{-3}$, a um tamanho de lote de $2$ e a funções de ativação de Sigmoide, Sigmoide e Sigmoide, respectivamente. A melhor perda de validação obtida foi de aproximadamente 1,779886.
+
+\subsection{Análise Comparativa}
+
+Além dos experimentos de otimização, realizamos experimentos de controle com hiperparâmetros fixados e conhecidos. Essa abordagem possibilita que se avalie a influência do processo de \textit{hypertuning} no desenvolvimento de redes especialistas de correção. O treinamento de controle foi feito nas duas bases de dados, mas a análise comparativa concentra-se nos resultados da base estendida.
+
+Os mesmos hiperparâmetros foram escolhidos para os cinco modelos de avaliação: taxa de aprendizado de $2 \cdot 10^{-5}$, tamanho de lote de $4$ e funções de ativação SeLU, Sigmoide e SeLU, respectivamente. Essa configuração está dentro do espaço de possibilidades (\autoref{subsec:hyperparameter-tuning}) e foi selecionada experimentalmente no início do projeto por apresentar um desempenho razoável.
+
+Os modelos de controle também foram treinados em 50 épocas, de modo que apenas a rede com melhor função de perda na base de validação foi salva. Isso é feito por meio do \textit{callback} \texttt{ModelCheckpoint}, apresentado anteriormente (\autoref{subsec:training-configurations}). Nas seções \ref{subsec:exp-fix-c1}, \ref{subsec:exp-fix-c2}, \ref{subsec:exp-fix-c3}, \ref{subsec:exp-fix-c4} e \ref{subsec:exp-fix-c5} confrontaremos, visualmente, a evolução dos treinamentos com \textit{hypertuning} e com hiperparâmetros fixados.
+
+\subsubsection{Competência I}
+\label{subsec:exp-fix-c1}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c1.pgf}}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c1_cont.pgf}}
+    \end{minipage}
+
+    \caption{Evolução do treinamento com \textit{hypertuning} (à esquerda) e do treinamento com hiperparâmetros fixados (à direita) do sistema especialista da competência I.}
+    \label{fig:exp-fix-c1}
+\end{figure}
+
+Pela figura \ref{fig:exp-fix-c1}, é possível notar que o treinamento com hiperparâmetros fixados apresentou uma evolução mais suave da função de perda, de modo que, em torno da 20ª época, o valor para a base de validação estagnou em cerca de 0,5 e o valor para a base de treino oscilou entre 0,05. No caso do \textit{hypertuning}, a função de perda registrou números mais altos tanto para a base de treino quanto de validação, convergindo para um valor de aproximadamente 0,7 já nas primeiras épocas. Constata-se, assim, que o processo de otimização não surtiu efeitos para a competência I.
+
+\subsubsection{Competência II}
+\label{subsec:exp-fix-c2}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c2.pgf}}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c2_cont.pgf}}
+    \end{minipage}
+
+    \caption{Evolução do treinamento com \textit{hypertuning} (à esquerda) e do treinamento com hiperparâmetros fixados (à direita) do sistema especialista da competência II.}
+    \label{fig:exp-fix-c2}
+\end{figure}
+
+Pela figura \ref{fig:exp-fix-c2}, é possível notar que o treinamento com hiperparâmetros fixados também apresentou uma evolução mais suave da função de perda, de modo que, em torno da 10ª época, o valor para a base de validação estagnou em cerca de 0,8. Além disso, a partir da 20ª época, a perda para a base de treino convergiu para aproximadamente 0,08, com alguns picos próximos das 40 iterações. No caso do \textit{hypertuning}, a função também registrou números mais altos para a base de treino e de validação. Na primeira situação, o valor estagnou em 1,5 ainda no início, enquanto que, na segunda, a perda oscilou entre 1 e 3 ao longo de todo o processo. Nota-se, assim, que o processo de otimização não foi efetivo para a competência II.
+
+
+\subsubsection{Competência III}
+\label{subsec:exp-fix-c3}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c3.pgf}}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c3_cont.pgf}}
+    \end{minipage}
+
+    \caption{Evolução do treinamento com \textit{hypertuning} (à esquerda) e do treinamento com hiperparâmetros fixados (à direita) do sistema especialista da competência III.}
+    \label{fig:exp-fix-c3}
+\end{figure}
+
+Pela figura \ref{fig:exp-fix-c3}, é possível notar que o treinamento com hiperparâmetros fixados apresentou uma evolução levemente melhor da função de perda, de modo que, em torno das primeiras épocas, o valor para a base de validação oscilou entre 0,8 e, entre a 30ª e a 45ª época, o valor para a base de treino ficou em torno de 0,1. No final das iterações, houve, ainda, um aumento significativo da perda tanto para a base de treino quanto para a base de validação, que é irrelevante devido ao \textit{callback} \texttt{ModelCheckpoint}. No caso do \textit{hypertuning}, a função aplicada aos dados de treino apresentou um decaimento ao longo das épocas, mas a perda para os dados de validação teve uma oscilação entre 1,04 e 0,94 entre todo o processo. Desse modo, observa-se que os parâmetros fixados apresentam uma leve vantagem em relação ao processo de otimização para a competência III.
+
+\subsubsection{Competência IV}
+\label{subsec:exp-fix-c4}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c4.pgf}}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c4_cont.pgf}}
+    \end{minipage}
+
+    \caption{Evolução do treinamento com \textit{hypertuning} (à esquerda) e do treinamento com hiperparâmetros fixados (à direita) do sistema especialista da competência IV.}
+    \label{fig:exp-fix-c4}
+\end{figure}
+
+Pela figura \ref{fig:exp-fix-c4}, é possível notar que o treinamento com hiperparâmetros fixados apresentou uma evolução levemente melhor da função de perda, de modo que, já no início, o valor para a base de validação oscilou em torno de 0,9, com alguns picos no meio do processo. Além disso, a partir da 15ª época, a perda para a base de treino convergiu para aproximadamente 0,1, apresentando 4 aumentos substanciais até o final. No caso do \textit{hypertuning}, a função seguiu registrando números mais altos para a base de treino e de validação. Na primeira circunstância, o valor estagnou em 1,35 ainda nas primeiras iterações, enquanto que, na segunda, a perda oscilou entre 1,3 e 1,5 ao longo do início e do fim do processo. Assim, infere-se que os parâmetros fixados possuem vantagens em relação ao \textit{hypertuning} para a competência IV.
+
+\subsubsection{Competência V}
+\label{subsec:exp-fix-c5}
+
+\begin{figure}[H]
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c5.pgf}}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \resizebox{\textwidth}{!}{\input{../figuras/graficos/train_c5_cont.pgf}}
+    \end{minipage}
+
+    \caption{Evolução do treinamento com \textit{hypertuning} (à esquerda) e do treinamento com hiperparâmetros fixados (à direita) do sistema especialista da competência V.}
+    \label{fig:exp-fix-c5}
+\end{figure}
+
+Pela figura \ref{fig:exp-fix-c5}, é possível notar que o treinamento com hiperparâmetros fixados apresentou uma evolução mais suave da função de perda, de modo que, a partir da 25ª época, o valor para a base de validação oscilou em torno de 1,3, com alguns pequenos picos no fim do processo, e, a partir da 20ª época, a perda para a base de treino convergiu para aproximadamente 0,1, apresentando apenas um aumento substancial posteriormente. No caso do \textit{hypertuning}, a função registrou números mais altos para a base de treino e de validação. Na primeira circunstância, o valor oscilou por volta de 1,8 em todas as iterações, enquanto que, na segunda, a perda desceu muito rápido para 1,7 nas primeiras épocas e assim permaneceu até o fim. Assim, nota-se que os parâmetros fixados possuem vantagens em relação ao \textit{hypertuning} para a competência V.
+
+\section{Avaliação}
+\label{sec:evaluate}
+
+Após o treinamento das redes especialistas, experimentos de avaliação dos modelos criados foram conduzidos visando comparar o desempenho dos sistemas de correção automática. Para isso, utilizamos as bases de dados estendida e simples da Essay-BR, além das arquiteturas com hiperparâmetros otimizados e fixos, de modo que os resultados obtidos pudessem ser comparados.
+
+Analisaremos o desempenho dos modelos utilizando as métricas apresentadas na seção \ref{subsec:methodology-evaluation} --- \textit{Quadratic Weighted Kappa} (\textbf{QWK}), Divergência (\textbf{DIV}), Proporção de Correspondência Exata (\textbf{PCE}) e \textit{Mean Squared Error} (\texttt{MSE}). Além disso, compararemos as versões desenvolvidas na tabela \ref{tab:eval-metrics}, em que \textbf{RTBE} e \textbf{RTBS} representam as redes com \textit{hypertuning} nas bases estendida e simples, respectivamente, e \textbf{RFBE} e \textbf{RFBS} representam as redes com hiperparâmetros fixos nas bases estendida e simples, também nessa ordem.
+
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+    \begin{tabular}{c|cccc|cccc|cccc|cccc|cccc}
+        \toprule
+        & \multicolumn{4}{c|}{Comp. I} & \multicolumn{4}{c|}{Comp. II} & \multicolumn{4}{c|}{Comp. III} & \multicolumn{4}{c|}{Comp. IV} & \multicolumn{4}{c}{Comp. V} \\
+        & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} \\ \midrule
+        \textbf{RTBE} & 0,012 & 0,653 & 0,468 & 0,0 & 0,017 & 0,978 & 0,367 & 0,0 & 0,029 & 0,903 & 0,465 & 0,0 & 0,032 & 1,294 & 0,381 & 0,0 & 0,079 & 1,729 & 0,338 & 0,0 \\
+        \textbf{RTBS} & & & & & & & & & & & & & & & & & & & &\\
+        \textbf{RFBE} & 0,008 & 0,358 & 0,683 & 0,595 & 0,017 & 0,702 & 0,554 & 0,468 & 0,013 & 0,623 & 0,546 & 0,501 & 0,022 & 0,805 & 0,513 & 0,576 & 0,036 & 1,156 & 0,421 & 0,483 \\
+        \textbf{RFBS} & & & & & & & & & & & & & & & & & & & & \\
+        \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Métricas de avaliação dos modelos de correção automática por competência.}
+    \label{tab:eval-metrics}
+\end{table}
+
+Nas seções \ref{subsec:eval-c1}, \ref{subsec:eval-c2}, \ref{subsec:eval-c3}, \ref{subsec:eval-c4} e \ref{subsec:eval-c5} avaliaremos os modelos construídos para cada competência, com base nas métricas apresentadas na tabela \ref{tab:eval-metrics}, e datalharemos o processo de inferência das notas por parte das melhores redes especialistas.
+
+\subsection{Competência I}
+\label{subsec:eval-c1}
+
+% breve parágrafo sobre a competência I na tabela geral, falando qual a melhor rede dentre as treinadas. falar que a figura abaixo vai mostrar a matriz de confusão
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.75\textwidth}{!}{\input{../figuras/matrizes/matrix_c1}}
+    \caption{Matriz de confusão do modelo de correção automática da competência I.}
+    \label{fig:eval-c1-confusion-matrix}
+\end{figure}
+
+% interpretação rápida e concisa da matriz de confusão
+
+\subsection{Competência II}
+\label{subsec:eval-c2}
+
+% repete ...
+
+\subsection{Competência III}
+\label{subsec:eval-c3}
+
+\subsection{Competência IV}
+\label{subsec:eval-c4}
+
+\subsection{Competência V}
+\label{subsec:eval-c5}
