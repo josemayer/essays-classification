@@ -175,7 +175,9 @@ Pela figura \ref{fig:exp-fix-c5}, é possível notar que o treinamento com hiper
 
 Após o treinamento das redes especialistas, experimentos de avaliação dos modelos criados foram conduzidos visando comparar o desempenho dos sistemas de correção automática. Para isso, utilizamos as bases de dados estendida e simples da Essay-BR, além das arquiteturas com hiperparâmetros otimizados e fixos, de modo que os resultados obtidos pudessem ser comparados.
 
-Analisaremos o desempenho dos modelos utilizando as métricas apresentadas na seção \ref{subsec:methodology-evaluation} --- \textit{Quadratic Weighted Kappa} (\textbf{QWK}), Divergência (\textbf{DIV}), Proporção de Correspondência Exata (\textbf{PCE}) e \textit{Mean Squared Error} (\texttt{MSE}). Além disso, compararemos as versões desenvolvidas na tabela \ref{tab:eval-metrics}, em que \textbf{RTBE} e \textbf{RTBS} representam as redes com \textit{hypertuning} nas bases estendida e simples, respectivamente, e \textbf{RFBE} e \textbf{RFBS} representam as redes com hiperparâmetros fixos nas bases estendida e simples, também nessa ordem.
+Analisaremos o desempenho dos modelos utilizando as métricas apresentadas na seção \ref{subsec:methodology-evaluation} --- \textit{Quadratic Weighted Kappa} (\textbf{QWK}), Divergência (\textbf{DIV}), Proporção de Correspondência Exata (\textbf{PCE}) e \textit{Mean Squared Error} (\textbf{MSE}). Quanto maior o QWK e o PCE, melhor a qualidade da rede. De modo análogo, quanto menor a DIV e o MSE, melhor o desempenho do modelo.
+
+Compararemos as versões desenvolvidas na tabela \ref{tab:eval-metrics}, em que \textbf{RTBE} e \textbf{RTBS} representam as redes com \textit{hypertuning} nas bases estendida e simples, respectivamente, e \textbf{RFBE} e \textbf{RFBS} representam as redes com hiperparâmetros fixos nas bases estendida e simples, também nessa ordem.
 
 \begin{table}[H]
     \centering
@@ -186,8 +188,8 @@ Analisaremos o desempenho dos modelos utilizando as métricas apresentadas na se
         & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} & \textbf{DIV} & \textbf{MSE} & \textbf{PCE} & \textbf{QWK} \\ \midrule
         \textbf{RTBE} & 0,012 & 0,653 & 0,468 & 0,0 & 0,017 & 0,978 & 0,367 & 0,0 & 0,029 & 0,903 & 0,465 & 0,0 & 0,032 & 1,294 & 0,381 & 0,0 & 0,079 & 1,729 & 0,338 & 0,0 \\
         \textbf{RTBS} & & & & & & & & & & & & & & & & & & & &\\
-        \textbf{RFBE} & 0,008 & 0,358 & 0,683 & 0,595 & 0,017 & 0,702 & 0,554 & 0,468 & 0,013 & 0,623 & 0,546 & 0,501 & 0,022 & 0,805 & 0,513 & 0,576 & 0,036 & 1,156 & 0,421 & 0,483 \\
-        \textbf{RFBS} & & & & & & & & & & & & & & & & & & & & \\
+        \textbf{RFBE} & \textbf{0,008} & \textbf{0,358} & 0,683 & \textbf{0,595} & 0,017 & 0,702 & 0,554 & 0,468 & 0,013 & 0,623 & 0,546 & 0,501 & 0,022 & 0,805 & \textbf{0,513} & 0,576 & 0,036 & 1,156 & 0,421 & 0,483 \\
+        \textbf{RFBS} & 0.013 & 0.417 & \textbf{0.720} & 0.542 & \textbf{0.016} & \textbf{0.640} & \textbf{0.572} & \textbf{0.562} & \textbf{0.010} & \textbf{0.554} & \textbf{0.593} & \textbf{0.539} & \textbf{0.010} & \textbf{0.701} & 0.504 & \textbf{0.621} & \textbf{0.030} & \textbf{0.932} & \textbf{0.494} & \textbf{0.548} \\
         \bottomrule
     \end{tabular}
     \end{adjustbox}
@@ -200,27 +202,69 @@ Nas seções \ref{subsec:eval-c1}, \ref{subsec:eval-c2}, \ref{subsec:eval-c3}, \
 \subsection{Competência I}
 \label{subsec:eval-c1}
 
-% breve parágrafo sobre a competência I na tabela geral, falando qual a melhor rede dentre as treinadas. falar que a figura abaixo vai mostrar a matriz de confusão
+A melhor rede especialista para a competência I foi a \textbf{RFBE}, que obteve um QWK de 0,595, uma divergência de de 0,008, um MSE de 0,358 e uma PCE de 0,683. A única métrica em que esse modelo ficou atrás foi a PCE, que foi maior para a \textbf{RFBS}. A figura \ref{fig:eval-c1-confusion-matrix} mostra a matriz de confusão para a rede.
 
 \begin{figure}[H]
     \centering
-    \resizebox{0.75\textwidth}{!}{\input{../figuras/matrizes/matrix_c1}}
-    \caption{Matriz de confusão do modelo de correção automática da competência I.}
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/matrizes/matrix_c1}}
+    \caption{Matriz de confusão do modelo RFBE da competência I.}
     \label{fig:eval-c1-confusion-matrix}
 \end{figure}
 
-% interpretação rápida e concisa da matriz de confusão
+Em geral, a partir da figura \ref{fig:eval-c1-confusion-matrix}, é possível observar que a rede especialista apresentou um desempenho razoável, de modo que as notas inferidas, na maioria das vezes, estão próximas ou são iguais às notas reais. Nota-se, entretanto, uma dificuldade em atribuir notas extremas: o modelo geralmente erra ao inferir pontuações 0, 1 e 5.
 
 \subsection{Competência II}
 \label{subsec:eval-c2}
 
-% repete ...
+A melhor rede especialista para a competência II foi a \textbf{RFBS}, que obteve um QWK de 0,562, uma divergência de de 0,016, um MSE de 0,640 e uma PCE de 0,572. A figura \ref{fig:eval-c2-confusion-matrix} mostra a matriz de confusão para a rede.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/matrizes/matrix_c2}}
+    \caption{Matriz de confusão do modelo RFBS da competência II.}
+    \label{fig:eval-c2-confusion-matrix}
+\end{figure}
+
+Em geral, a partir da figura \ref{fig:eval-c2-confusion-matrix}, é possível observar que a rede especialista apresentou um desempenho razoável, de modo que notas inferidas, também na maior parte das vezes, estão próximas ou são iguais às notas reais. Para pontuações 0, 1 e 2, no entanto, notamos que a distribuição das notas inferidas tem um comportamente análogo ao aleatório. O melhor modelo da competência II também tem dificuldades de generalização, já que não atribuiu nenhuma nota 0 ou 5 para a divisão de testes.
 
 \subsection{Competência III}
 \label{subsec:eval-c3}
 
+A melhor rede especialista para a competência III foi a \textbf{RFBS}, que obteve um QWK de 0,539, uma divergência de de 0,010, um MSE de 0,554 e uma PCE de 0,593. A figura \ref{fig:eval-c3-confusion-matrix} mostra a matriz de confusão para a rede.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/matrizes/matrix_c3}}
+    \caption{Matriz de confusão do modelo RFBS da competência III.}
+    \label{fig:eval-c3-confusion-matrix}
+\end{figure}
+
+Em geral, a partir da figura \ref{fig:eval-c3-confusion-matrix}, é possível observar que a rede especialista apresentou um desempenho razoável, de modo que as notas inferidas, também na maioria das vezes, estão próximas ou são iguais às notas reais. O melhor modelo da competência III teve dificuldades em lidar com notas extremas, já que errou em 100\% dos casos que atribuiu nota 5 para uma competência e acertou apenas 6\% das notas 0.
+
 \subsection{Competência IV}
 \label{subsec:eval-c4}
 
+A melhor rede especialista para a competência IV foi a \textbf{RFBS}, que obteve um QWK de 0,621, uma divergência de de 0,010, um MSE de 0,701 e uma PCE de 0,504. O modelo só registrou subdesempenho na métrica de PCE, em relação à versão \textbf{RFBE}. A figura \ref{fig:eval-c4-confusion-matrix} mostra a matriz de confusão para a rede.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/matrizes/matrix_c4}}
+    \caption{Matriz de confusão do modelo RFBS da competência IV.}
+    \label{fig:eval-c4-confusion-matrix}
+\end{figure}
+
+Em geral, a partir da figura \ref{fig:eval-c4-confusion-matrix}, é possível observar que a rede especialista apresentou um desempenho razoável, de modo que as notas inferidas, em boa parte das vezes, estão próximas ou são iguais às notas reais. O melhor modelo para a competência IV, no entanto, tem dificuldades em reconhecer notas baixas como 0 e 1, atribuindo-as inadequadamente em relação às pontuações reais.
+
 \subsection{Competência V}
 \label{subsec:eval-c5}
+
+Por fim, a melhor rede especialista para a competência V foi a \textbf{RFBS}, que obteve um QWK de 0,548, uma divergência de de 0,030, um MSE de 0,932 e uma PCE de 0,494. A figura \ref{fig:eval-c5-confusion-matrix} mostra a matriz de confusão para a rede.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.5\textwidth}{!}{\input{../figuras/matrizes/matrix_c5}}
+    \caption{Matriz de confusão do modelo RFBS da competência V.}
+    \label{fig:eval-c5-confusion-matrix}
+\end{figure}
+
+Em geral, a partir da figura \ref{fig:eval-c5-confusion-matrix}, é possível observar que a rede especialista apresentou um desempenho razoável, de modo que as notas inferidas, para pontuações reais acima de 2, também estão próximas ou são iguais às notas reais. Nota-se que o melhor modelo para a competência V, no entanto, tem dificuldades em reconhecer notas baixas como 0 e 1, atribuindo quantidades significativas de pontuações 2 e 3.
