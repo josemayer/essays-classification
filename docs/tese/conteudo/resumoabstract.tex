@@ -4,46 +4,23 @@
 
 % As palavras-chave são obrigatórias, em português e em inglês, e devem ser
 % definidas antes do resumo/abstract. Acrescente quantas forem necessárias.
-\palavrachave{Palavra-chave1}
-\palavrachave{Palavra-chave2}
-\palavrachave{Palavra-chave3}
+\palavrachave{ENEM}
+\palavrachave{Inteligência Artificial}
+\palavrachave{Processamento de Linguagem Natural}
+\palavrachave{Avaliação Automática de Redações}
+\palavrachave{Transformadores}
+\palavrachave{BERTimbau}
 
-\keyword{Keyword1}
-\keyword{Keyword2}
-\keyword{Keyword3}
+\keyword{ENEM}
+\keyword{Artificial Intelligence}
+\keyword{Natural Language Processing}
+\keyword{Automated Essay Scoring}
+\keyword{Transformers}
+\keyword{BERTimbau}
 
 % O resumo é obrigatório, em português e inglês. Estes comandos também
 % geram automaticamente a referência para o próprio documento, conforme
 % as normas sugeridas da USP.
-\resumo{
-Elemento obrigatório, constituído de uma sequência de frases concisas e
-objetivas, em forma de texto. Deve apresentar os objetivos, métodos empregados,
-resultados e conclusões. O resumo deve ser redigido em parágrafo único, conter
-no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
-trabalho (palavras-chave). Deve ser precedido da referência do documento.
-Texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto.
-Texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto.
-}
+\resumo{A avaliação automatizada de redações, que integra as ferramentas de inteligência artificial à educação, tem obtido um notável crescimento nos últimos anos, impulsionada pelo uso de técnicas avançadas de processamento de linguagem natural. Esta abordagem, caracterizada pela atribuição de notas a produções textuais de estudantes, ganha destaque no âmbito do Exame Nacional do Ensino Médio (ENEM), principal meio de admissão ao ensino superior no Brasil. Nesse contexto, a tecnologia demonstra grande potencial para agilizar a cadeia logística de avaliações, oferecendo meios eficazes de qualificar as competências de escrita dos alunos em escala nacional. Este trabalho explora o desenvolvimento de sistemas automáticos de correção de redações em língua portuguesa, alinhados ao formato do ENEM. A partir de coletâneas abertas de textos avaliados por especialistas, elaboraram-se estruturas que se utilizam do BERTimbau, um modelo de linguagem fundamentado em \textit{transformers} e adaptado ao português, para codificar redações com riqueza semântica, empregando-as no treinamento de redes neurais capazes de atribuir notas correspondentes. Em particular, cinco sistemas independentes foram construídos com o intuito de avaliar os textos a partir de uma matriz de competências, como exigido pelo ENEM. Além disso, ao longo do projeto, aprimorou-se a eficácia dos modelos por meio da utilização de técnicas especializadas de aprendizado. Isso incluiu a investigação automática de configurações ideais de hiperparâmetros para as redes, buscando aprimorar a precisão dos resultados obtidos. Apesar da constatada ineficácia no processo de otimização de hiperparâmetros, a opção por arquiteturas fixas revelou-se promissora, aproximando os resultados da avaliação automática da qualidade das correções humanas.}
 
-\abstract{
-Elemento obrigatório, elaborado com as mesmas características do resumo em
-língua portuguesa. De acordo com o Regimento da Pós-Graduação da USP (Artigo
-99), deve ser redigido em inglês para fins de divulgação. É uma boa ideia usar
-o sítio \url{www.grammarly.com} na preparação de textos em inglês.
-Text text text text text text text text text text text text text text text text
-text text text text text text text text text text text text text text text text
-text text text text text text text text text text text text text text text text
-text text text text text text text text text text text text.
-Text text text text text text text text text text text text text text text text
-text text text text text text text text text text text text text text text text
-text text text.
-}
+\abstract{The automated essay scoring, integrating artificial intelligence tools into education, has experienced remarkable growth in recent years, driven by the use of advanced natural language processing techniques. This approach, characterized by grading students' textual productions, stands out within the scope of the \textit{Exame Nacional do Ensino Médio} (ENEM), the primary means of admission to higher education in Brazil. In this context, technology demonstrates great potential to speed up the assessment logistics chain, offering effective means of qualifying students' writing skills on a national scale. This work explores the development of automatic essay correction systems in the Portuguese language, aligned with the ENEM format. The structures were built from open collections of texts evaluated by experts, utilizing BERTimbau, a large language model based on transformers and adapted to Portuguese, to generate essays embeddings with semantic richness. These structures are employed in the training of neural networks capable of assigning corresponding grades. Specifically, five independent systems were constructed to evaluate texts based on a competency matrix, as required by the ENEM. Throughout the project, the effectiveness of the models was enhanced through the use of specialized learning techniques. This included the automated hypertuning procedure for the networks, aiming to improve the accuracy of the results obtained. Despite the observed inefficiency in the hyperparameter optimization, the choice of fixed architectures proved promising, bringing the results of automatic assessment closer to the quality of human evaluations.}
