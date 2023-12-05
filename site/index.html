@@ -24,27 +24,36 @@
         </div>
       </div>
       <div class="container">
-        <h1>Avaliação Automática de Redações Dissertativo-Argumentativas no Modelo do ENEM</h1>
+      <h1>Avaliação Automática de Redações no Modelo do ENEM por meio do <i>fine-tuning</i> do BERTimbau</h1>
         <p>
-          O Exame Nacional do Ensino Médio (ENEM) é uma das principais formas de
-          acesso ao ensino superior no Brasil e abrange diversas áreas do
-          conhecimento. Uma parte dele é composta pela prova de redação, que é
-          aplicada para avaliar a habilidade de produção textual dos alunos sobre um
-          tema relevante em âmbito nacional. A correção das redações, cujo modelo é o
-          dissertativo-argumentativo, é realizada manualmente por avaliadores, o que
-          torna o processo custoso e demorado. Nesse sentido, o uso de técnicas de
-          inteligência artificial para automatizar a correção desses textos pode
-          representar uma alternativa viável para agilizar a tarefa. Diante disso,
-          este tema proposto tem como objetivo explorar o uso de técnicas de
-          aprendizado profundo para a classificação automática de redações
-          dissertativo-argumentativas do ENEM, com base em modelos pré-treinados de
-          processamento de linguagem natural para a língua portuguesa. Visa-se, com
-          isso, definir um projeto cujo intuito é investigar arquiteturas de redes
-          neurais para ajustar os modelos e avaliar os resultados com métricas de
-          precisão conhecidas. Essa pesquisa poderá ser um avanço para o
+          A avaliação automatizada de redações, que integra as
+          ferramentas de inteligência artificial à educação, tem obtido um
+          notável crescimento nos últimos anos, impulsionada pelo uso de
+          técnicas avançadas de processamento de linguagem natural. Esta
+          abordagem, caracterizada pela atribuição de notas a produções
+          textuais de estudantes, ganha destaque no âmbito do Exame Nacional
+          do Ensino Médio (ENEM), principal meio de admissão ao ensino
+          superior no Brasil. Nesse contexto, a tecnologia demonstra grande
+          potencial para agilizar a cadeia logística de avaliações, oferecendo
+          meios eficazes de qualificar as competências de escrita dos
+          alunos em escala nacional. Este trabalho explora o
           desenvolvimento de sistemas automáticos de correção de redações em língua
-          portuguesa, bem como para aprimorar e facilitar o processo de avaliação
-          dos estudantes no ENEM.
+          portuguesa, alinhados ao formato do ENEM. A partir de coletâneas
+          abertas de textos avaliados por especialistas, elaboraram-se
+          estruturas que se utilizam do BERTimbau, um modelo de linguagem
+          fundamentado em <i>transformers</i> e adaptado ao português, para
+          codificar redações com riqueza semântica, empregando-as no treinamento de
+          redes neurais capazes de atribuir notas correspondentes. Em
+          particular, cinco sistemas independentes foram construídos com o
+          intuito de avaliar os textos a partir de uma matriz de
+          competências, como exigido pelo ENEM. Além disso, ao longo do projeto,
+          aprimorou-se a eficácia dos modelos por meio da utilização de técnicas
+          especializadas de aprendizado. Isso incluiu a investigação automática de
+          configurações ideais de hiperparâmetros para as redes, buscando
+          aprimorar a precisão dos resultados obtidos. Apesar da constatada
+          ineficácia no processo de otimização de hiperparâmetros, a opção por
+          arquiteturas fixas revelou-se promissora, aproximando os resultados da
+          avaliação automática da qualidade das correções humanas.
         </p>
         <p>
           <a href="docs/proposta.pdf">
@@ -53,10 +62,12 @@
               Proposta
             </button>
           </a>
-          <button disabled>
-            <i class="icon fa fa-newspaper"></i>
-            Monografia
-          </button>
+          <a href="docs/monografia.pdf">
+            <button>
+              <i class="icon fa fa-newspaper"></i>
+                Monografia
+            </button>
+          </a>
         </p>
       </div>
       <div class="footer">
