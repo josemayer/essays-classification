@@ -1,0 +1,213 @@
+% Authors: Nelson Lago, Arthur Del Esposte and Eduardo Zambom Santana
+% Portions of the example contents: Arthur Del Esposte
+% This file is distributed under the MIT Licence
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PREÂMBULO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% A língua padrão é a última citada
+\documentclass[
+  xcolor={hyperref,svgnames,x11names,table},
+  hyperref={pdfencoding=unicode,plainpages=false,pdfpagelabels=true,breaklinks=true},
+  brazilian,english,
+]{beamer}
+
+\usepackage{standalone}
+% Vários pacotes e opções de configuração genéricos
+\input{extras/basics}
+\input{extras/languages}
+\input{extras/fonts}
+\input{extras/floats}
+\input{extras/index}
+\input{extras/bibconfig}
+\input{extras/hyperlinks}
+\hidelinks % desabilita cor/sublinhado dos links (URLs, refs etc.)
+\input{extras/source-code}
+\input{extras/utils}
+
+% Diretórios onde estão as figuras; com isso, não é preciso colocar o caminho
+% completo em \includegraphics (e nem a extensão).
+\graphicspath{{figuras/},{logos/}}
+
+% Comandos rápidos para mudar de língua:
+% \en -> muda para o inglês
+% \br -> muda para o português
+% \texten{blah} -> o texto "blah" é em inglês
+% \textbr{blah} -> o texto "blah" é em português
+\babeltags{br = brazilian, en = english}
+
+% Espaçamento simples
+\singlespacing
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% APARÊNCIA DO BEAMER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Possible paper sizes: a0, a0b, a1, a2, a3, a4.
+%% Possible orientations: portrait, landscape
+%% Font sizes can be changed using the scale option.
+\usepackage[size=a1,orientation=portrait,scale=1.8]{beamerposter}
+
+\usetheme{imeusp-poster} % carregado do diretório extras (veja basics.tex)
+
+% O padrão usa um tom de vermelho escuro como cor principal; a opção
+% "greeny" troca essa cor por um tom de verde; a opção "sandy" usa o
+% mesmo tom de verde mas modifica a cor padrão dos blocos para um tom
+% amarelado. "bluey" usa as cores do manual de identidade visual do IME.
+\usecolortheme[bluey]{imeusp} % carregado do diretório extras (veja basics.tex)
+
+%Remove ícones de navegação
+\beamertemplatenavigationsymbolsempty
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% COMANDOS PARA O USUÁRIO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Medidas feitas "a olho"
+\newcommand\singlecol{\column{.963\textwidth}}
+\newcommand\halfcol{\column{.46\textwidth}}
+\newcommand\onethirdcol{\column{.2922\textwidth}}
+\newcommand\twothirdscol{\column{.626\textwidth}}
+\newcommand\onefourthcol{\column{.2084\textwidth}}
+
+% Blocos de cor personalizada
+\newenvironment{coloredblock}[2]%
+  {
+    \setbeamercolor{block title}{fg=white,bg=#1!80!white}
+    \setbeamercolor{block body}{fg=darkgray,bg=#1!20!white}
+    \setbeamercolor{local structure}{fg=darkgray,bg=#1!20!white}
+    \begin{block}{#2}
+  }
+  {\end{block}}
+
+% Bibliografia. Apenas estilos bibliográficos derivados de numeric,
+% alphabetic, authortitle e authoryear (como beamer-ime) vão funcionar
+% bem aqui! Outros estilos, como abnt ou apa, vão gerar problemas de
+% layout que você vai precisar ajustar manualmente. Observe que, num
+% poster ou apresentação, provavelmente é uma boa ideia usar apenas
+% \nocite e não \cite.
+\usepackage[
+  %style=extras/plainnat-ime, % variante de autor-data, similar a plainnat
+  %style=alphabetic, % similar a alpha
+  %style=numeric, % comum em artigos
+  %style=authoryear-comp, % autor-data "padrão" do biblatex
+  %style=apa, % variante de autor-data, muito usado
+  %style=abnt,
+  style=extras/beamer-ime,
+]{biblatex}
+
+% Num poster, a bibliografia pode ficar em tamanho menor
+\renewcommand*{\bibfont}{\footnotesize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% METADADOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% O arquivo com os dados bibliográficos para biblatex; você pode usar
+% este comando mais de uma vez para acrescentar múltiplos arquivos
+\addbibresource{bibliografia.bib}
+
+% Este comando permite acrescentar itens à lista de referências sem incluir
+% uma referência de fato no texto (pode ser usado em qualquer lugar do texto)
+%\nocite{bronevetsky02,schmidt03:MSc, FSF:GNU-GPL, CORBA:spec, MenaChalco08}
+% Com este comando, todos os itens do arquivo .bib são incluídos na lista
+% de referências
+%\nocite{*}
+
+\title[CCSL]{\vspace{10mm} Avaliação Automática de Redações no Modelo do \\ ENEM por meio do \textit{fine-tuning} do BERTimbau \vspace{10mm}}
+
+\institute{Departamento de Ciência da Computação --- Universidade de São Paulo}
+
+\author[josemayer@usp.br]{\textbf{José Lucas Silva Mayer} \tiny{(Sob a orientação de Denis Deratani Mauá e Igor Cataneo Silveira)}}
+\date{11 de Dezembro, 2023}
+
+% Optional foot image
+\footimage{\raisebox{1cm}[0pt][0pt]{\includegraphics[width=10cm]{ccsl-logo} \hspace{5mm}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INÍCIO DO POSTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\addtobeamertemplate{block begin}{}{\justifying}
+
+\begin{document}
+
+% Em um poster não há \maketitle
+
+\begin{frame}[fragile]\centering
+
+\vspace{-.5\baselineskip}
+
+\begin{columns}[T]
+
+    \halfcol
+
+    \begin{block}{Introdução}
+        O surgimento de modelos de linguagem como o BERT (\cite{bert2018}), baseados em \textit{transformers}, superou técnicas tradicionais de classificação de texto ao utilizar mecanismos que consideram o significado e a relação entre palavras de forma eficiente. A capacidade de ajuste fino de tais modelos pode, ainda, destacá-los na tarefa de avaliação automática de redações, já que permite a eles um treinamento especializado para a assimilação de padrões. Tal abordagem pode ser aplicada a exames como o ENEM, que possui uma cadeia logística complexa e lenta para a realização das correções. Este trabalho visa utilizar conjuntos de dados anotados e abertos para realizar o treinamento de cinco sistemas especialistas em avaliações de redações no modelo do ENEM, cada um com foco em uma competência distinta do exame.
+    \end{block}
+
+    \begin{block}{Objetivos}
+        \begin{itemize}
+            \item Desenvolver modelos de correção automática de redações baseados no BERT.
+            \item Comparar desempenho de técnicas de treinamento e arquitetura de sistemas especialistas.
+            \item Avaliar precisão da avaliação automática em relação à correção humana.
+            \item Discutir vantagens ou desvantagens da abordagem automatizada e documentar resultados obtidos.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Fundamentação Teórica}
+        O BERT, um modelo de linguagem baseado em transformadores, supera limitações recorrentes ao utilizar o mecanismo de atenção para modelar dependências bidirecionais. Ele atua principalmente na codificação, usando o \textit{encoder} dos transformadores.
+        \begin{figure}[H]
+            \centering
+            \includestandalone{figuras/transformer}
+            \caption{Arquitetura de um transformador (\cite{attention2017}).}
+            \label{fig:transformer}
+        \end{figure}
+    \end{block}
+
+    \halfcol
+
+    \begin{block}{Metodologia}
+        Utilizando a base de dados Essay-BR (\cite{marinho-et-al-22}), em suas versões simples e estendida, foram treinados modelos especializados em atribuir notas às cinco competências do ENEM (\cite{cartilha-redacao}). A arquitetura de cada sistema foi elaborada com base na técnica de \textit{fine-tuning} do BERT, usando o modelo pré-treinado BERTimbau para capturar nuances linguísticas em textos em língua portuguesa. Após o treinamento, os modelos foram rigorosamente avaliados com métricas de desempenho de aprendizado de máquina, como o \textit{Quadratic Weighted Kappa} (QWK) (\cite{cohen-1968-qwk}), e métricas do ENEM.
+    \end{block}
+
+    \begin{block}{Arquitetura dos Modelos}
+        \begin{figure}[H]
+            \centering
+            \includegraphics{figuras/full_architecture.pdf}
+            \caption{Arquitetura dos modelos de correção automática.}
+            \label{fig:arquitetura}
+        \end{figure}
+    \end{block}
+
+    \begin{block}{Resultados}
+        Sendo PCE a proporção de correspondência exata e MSE o erro quadrático médio, os melhores resultados dos sistemas avaliadores são mostrados pela tabela abaixo.
+        \begin{table}[H]
+            \small
+            \centering
+            \begin{tabular}{llll}
+                \toprule
+                \textbf{Modelos} & QWK & PCE & MSE \\
+                \midrule
+                \textbf{Competência I} & 0,595 & 68,3\% & 0,358 \\
+                \textbf{Competência II} & 0,562 & 57,2\% & 0,640 \\
+                \textbf{Competência III} & 0,539 & 59,3\% & 0,554 \\
+                \textbf{Competência IV} & 0,621 & 50,4\% & 0,701 \\
+                \textbf{Competência V} & 0,548 & 49,4\% & 0,932 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+    \end{block}
+
+    \begin{block}{Bibliografia}
+        \vspace{.017\baselineskip}
+        \printbibliography
+        \vspace{.017\baselineskip}
+    \end{block}
+
+\end{columns}
+
+\vspace{.5\baselineskip}
+
+\end{frame}
+
+\end{document}
